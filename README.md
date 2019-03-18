@@ -1,0 +1,2 @@
+# autoInstallForCentOS7
+该脚本用于全自动安装Linux软件
