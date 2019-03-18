@@ -1,4 +1,8 @@
 # autoInstallForCentOS7
+
+开发语言：shell
+采用框架：无
+
 该脚本用于全自动安装Linux软件
 
 理论上适用于redhat和debian两种分支的系统，但实际上并未在debian上实践过，可能存在很多错误——仅对CentOS7系统具有较好的支持。
