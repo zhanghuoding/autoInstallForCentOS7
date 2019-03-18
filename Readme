@@ -1,0 +1,102 @@
+===============================================================
+author	:王勃博
+time		:2017-10-07
+modify	:2019-01-07
+site		:Yunnan University
+e-mail	:wangbobochn@gmail.com
+===============================================================
+
+
+Summary
+==============================================================
+In order to setting CentOS7 system and install application softwares faster,alse in
+order to achieve time saving.I writ these two scripts,getSudoPermission.sh and
+setup.sh.
+These package only fit CentOS7,for other Linux system,you should modify them.
+
+
+parameter
+==============================================================
+These two scripts need three parameteres when execute.
+The first parameter is your user name.
+The second parameter must is a digital,it will control the time of the install loop.
+The third paramenter will decide whether upgrade or update your system,upgrade will be execute when 
+you give parameter "upgrade",and upgrade and update will all be execute when you give parameter as update.
+For he forth parameter,if you want to redirect output to a file,you should set this
+parameter like "-y",otherwise,you should set it with "-n".
+These four parameter like:
+#./getPermission.sh Tom 2 upgrate -y
+$sudo ./setup.sh Tom 2 upgrate -y
+or like:
+#./getPermission.sh Tom 2 NoUpdate -y
+$sudo ./setup.sh Tom 2 NoUpdate -y
+
+
+using
+==============================================================
+After download this package and unzip it,you should authorization permission first
+like following:
+$su
+#chmod +x ./getPermission.sh ./setup.sh
+
+Then you can run these two scripts.If your using user can run command "sudo",
+you can execute setup.sh directly,like:
+$sudo ./setup.sh Tom 2 upgrate -y
+otherwise,you shuould execute getPermission.sh first using root permission,like:
+$su
+#./getPermission.sh Tom 2 -y
+when the command done,you should exit root permisson,like:
+#exit
+then,you can execute setup.sh,like:
+$sudo ./setup.sh Tom 2 upgrate -y
+
+
+Remind:
+==============================================================
+If you want to accelerate your computer's internet speed,you can try to run "installBBR.sh".
+BBR is a accelerator,the algorithm of bbr was developed by google and every user said that bbr
+brought a very good experence. In my experence,I installed BBR on my VPS,that I can watch
+4K video on Youtube and it was very fluency.Additionally,I watch Youtube by ShadowsocksR.
+To install BBR:
+$sudo chmod +x ./installBBR.sh
+$sudo ./installBBR.sh
+
+After installed BBR,you should reboot your system to make BBR effective.
+You can use bellow commands to check whether BBR have been installed.
+
+$uname -r
+####This command used check the version of you Linux OS kernel.If the information printed
+contain "4.9.0" or above,it shows that kernel updated successfully.
+
+$sysctl net.ipv4.tcp_available_congestion_control
+###If the output information contain "bbr",it shows OK.
+
+$sysctl net.ipv4.tcp_congestion_control
+###If the output information contain "bbr",it shows OK.
+
+$lsmod | grep bbr
+###If the output information likes "tcp_bbr                20480  11",it shows OK.
+
+If all above shows OK, congratulations on the success of your installation.
+
+
+
+
+Notice:
+==============================================================
+After you installed BBR,it is possible that your system can't start.Then you can try to
+modify grub or reinstall your OS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
