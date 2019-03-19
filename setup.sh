@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2019-01-14
+#modify	:2019-03-19
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -1225,24 +1225,24 @@ installWPS()
 #if wps exist,then skip this step.
 	if [[ ! -e "/opt/wps-office" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office_10.1.0.6757_x86_64.tar.xz" ]]
+		if [[ ! -e "$currentPath/wps-office_10.1.0.6758_x86_64.tar.xz" ]]
 		then
-			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office_10.1.0.6757_x86_64.tar.xz
+			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office_10.1.0.6758_x86_64.tar.xz
 			$changeOwn
 		fi
 
 		$getPermission mkdir -p /opt/wps-office
-		tar -Jxvf $currentPath/wps-office_10.1.0.6757_x86_64.tar.xz
+		tar -Jxvf $currentPath/wps-office_10.1.0.6758_x86_64.tar.xz
 		$changeOwn
-		$getPermission cp -r $currentPath/wps-office_10.1.0.6757_x86_64/* /opt/wps-office
+		$getPermission cp -r $currentPath/wps-office_10.1.0.6758_x86_64/* /opt/wps-office
 
 		$getPermission cp $currentPath/WPS-Excel-logo.png $currentPath/WPS-Word-logo.png $currentPath/WPS-PPT-logo.png  /opt/wps-office/
 
 #install fonts
 		$getPermission /opt/wps-office/install_fonts
-		$currentPath/wps-office_10.1.0.6757_x86_64/install_fonts
+		$currentPath/wps-office_10.1.0.6758_x86_64/install_fonts
 
-		$getPermission  rm -rf $currentPath/wps-office_10.1.0.6757_x86_64
+		$getPermission  rm -rf $currentPath/wps-office_10.1.0.6758_x86_64
 
 
 #create initiator of "WPS-Word"
@@ -1275,12 +1275,12 @@ installWPS()
 #install other wps.You can remove following three lines.
 	if [[ s$packageManager == s"yum" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office-10.1.0.6757-1.x86_64.rpm" ]]
+		if [[ ! -e "$currentPath/wps-office-10.1.0.6758-1.x86_64.rpm" ]]
 		then
-			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office-10.1.0.6757-1.x86_64.rpm
+			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office-10.1.0.6758-1.x86_64.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-10.1.0.6757-1.x86_64.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-10.1.0.6758-1.x86_64.rpm
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
 		if [[ ! -e "$currentPath/wps-office_10.1.0.6757_amd64.deb" ]]
