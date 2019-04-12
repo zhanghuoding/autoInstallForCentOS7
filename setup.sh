@@ -1298,6 +1298,19 @@ installWPS()
 		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_11.1.0.8372_amd64.deb
 	fi
 
+#repair a bug that wps cann't running and hint "/opt/kingsoft/wps-office/office6/wps: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by /opt/kingsoft/wps-office/office6/libc++abi.so.1):"
+	wget -P $currentPath/ http://ftp.gnu.org/gnu/glibc/glibc-2.18.tar.gz
+	$changeOwn
+	tar -zxvf $currentPath/glibc-2.18.tar.gz
+	$changeOwn
+	mkdir $currentPath/glibc-2.18/build
+	cd $currentPath/glibc-2.18/build
+	$currentPath/glibc-2.18/configure --prefix=/usr
+	$changeOwn
+	make -j2 && $getPermission  make install
+	cd $currentPath
+	$getPermission rm -rf $currentPath/glibc-2.18
+
 #resolve the problem that can not input chinese in "WPS-office" for Debian.
 #	$installCommandHead_skipbroken_nogpgcheck fcitx-frontend-qt4 fcitx-frontend-qt5 fcitx-libs-qt fcitx-libs-qt5 libfcitx-qt0 libfcitx-qt5-1
 	initSystemTime
