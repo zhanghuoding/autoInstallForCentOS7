@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2019-03-21
+#modify	:2019-04-12
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -1227,6 +1227,8 @@ installWPS()
 	echo 'enter installWPS()'"	$systemTime " >> $outputRedirectionCommand
 
 #if wps exist,then skip this step.
+:<<!
+#The package by ".tar.xz" format was ended.
 	if [[ ! -e "/opt/wps-office" ]]
 	then
 		if [[ ! -e "$currentPath/wps-office_10.1.0.6758_x86_64.tar.xz" ]]
@@ -1275,24 +1277,25 @@ installWPS()
 		$getPermission sed -i 's#Icon.*$#Icon=/opt/wps-office/WPS-Excel-logo.png#g' /usr/share/applications/WPS-Excel.desktop
 
 	fi
+!
 
 #install other wps.You can remove following three lines.
 	if [[ s$packageManager == s"yum" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office-10.1.0.6758-1.x86_64.rpm" ]]
+		if [[ ! -e "$currentPath/wps-office-11.1.0.8372-1.x86_64.rpm" ]]
 		then
-			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office-10.1.0.6758-1.x86_64.rpm
+			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8372/wps-office-11.1.0.8372-1.x86_64.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-10.1.0.6758-1.x86_64.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-11.1.0.8372-1.x86_64.rpm
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office_10.1.0.6757_amd64.deb" ]]
+		if [[ ! -e "$currentPath/wps-office_11.1.0.8372_amd64.deb" ]]
 		then
-			wget -P $currentPath/ http://kdl.cc.ksosoft.com/wps-community/download/6757/wps-office_10.1.0.6757_amd64.deb
+			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8372/wps-office_11.1.0.8372_amd64.deb
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_10.1.0.6757_amd64.deb
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_11.1.0.8372_amd64.deb
 	fi
 
 #resolve the problem that can not input chinese in "WPS-office" for Debian.
