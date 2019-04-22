@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2019-04-12
+#modify	:2019-04-22
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -1282,20 +1282,20 @@ installWPS()
 #install other wps.You can remove following three lines.
 	if [[ s$packageManager == s"yum" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office-11.1.0.8372-1.x86_64.rpm" ]]
+		if [[ ! -e "$currentPath/wps-office-11.1.0.8392-1.x86_64.rpm" ]]
 		then
-			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8372/wps-office-11.1.0.8372-1.x86_64.rpm
+			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office-11.1.0.8392-1.x86_64.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-11.1.0.8372-1.x86_64.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-11.1.0.8392-1.x86_64.rpm
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office_11.1.0.8372_amd64.deb" ]]
+		if [[ ! -e "$currentPath/wps-office_11.1.0.8392_amd64.deb" ]]
 		then
-			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8372/wps-office_11.1.0.8372_amd64.deb
+			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_11.1.0.8372_amd64.deb
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_11.1.0.8392_amd64.deb
 	fi
 
 #repair a bug that wps cann't running and hint "/opt/kingsoft/wps-office/office6/wps: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by /opt/kingsoft/wps-office/office6/libc++abi.so.1):"
