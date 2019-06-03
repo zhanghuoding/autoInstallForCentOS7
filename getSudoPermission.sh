@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2018-09-30
+#modify	:2019-06-03
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -178,7 +178,7 @@ start()
 	echo 'chainloader +1'  >> /boot/grub2/grub.cfg
 	echo '}'  >> /boot/grub2/grub.cfg
 
-	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 vim-X11 
 	initSystemTime
 	echo 'leave start()'"	$systemTime "
 	echo 'leave start()'"	$systemTime " >> $outputRedirectionCommand
