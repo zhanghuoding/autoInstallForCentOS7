@@ -517,6 +517,36 @@ installShadowsocks()
 	echo 'leave installShadowsocks()'"	$systemTime " >> $outputRedirectionCommand
 }
 
+installBaidunetdisk()
+{
+#there is how to install proxy software,shadowsocks.
+	initSystemTime
+	echo 'enter installBaidunetdisk()'"	$systemTime "
+	echo 'enter installBaidunetdisk()'"	$systemTime " >> $outputRedirectionCommand
+
+:<<?
+	if [[ s$packageManager == s"yum" ]]
+	then
+		if [[ ! -e $currentPath/baidunetdisk_linux_2.0.1.rpm ]]
+		then
+			wget -O $currentPath/baidunetdisk_linux_2.0.1.rpm http://issuecdn.baidupcs.com/issue/netdisk/LinuxGuanjia/baidunetdisk_linux_2.0.1.rpm
+			$changeOwn
+		fi
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/baidunetdisk_linux_2.0.1.rpm
+	elif [[ s$packageManager == s"apt-get" ]]
+	then
+		echo 'There is nothing to do!'
+	fi
+?
+	$installCommandHead_skipbroken_nogpgcheck  baidunetdisk*
+	$installCommandHead_skipbroken_nogpgcheck  baidunetdisk*
+
+
+	initSystemTime
+	echo 'leave installBaidunetdisk()'"	$systemTime "
+	echo 'leave installBaidunetdisk()'"	$systemTime " >> $outputRedirectionCommand
+}
+
 installTeamViewer()
 {
 #there will install teamviewer.
@@ -1522,6 +1552,9 @@ enterCurrentRootPath
 installNetease_cloud_music
 
 enterCurrentRootPath
+installBaidunetdisk
+
+enterCurrentRootPath
 installWechat
 
 enterCurrentRootPath
@@ -1608,6 +1641,9 @@ do
 
 	enterCurrentRootPath
 	installNetease_cloud_music
+
+	enterCurrentRootPath
+	installBaidunetdisk
 
 	enterCurrentRootPath
 	installWechat
