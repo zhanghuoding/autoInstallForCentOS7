@@ -541,6 +541,27 @@ installBaidunetdisk()
 	$installCommandHead_skipbroken_nogpgcheck  baidunetdisk*
 	$installCommandHead_skipbroken_nogpgcheck  baidunetdisk*
 
+#then set starter's logo
+	$getPermission mkdir /opt/Baidu/Baidunetdisk -p
+	$getPermission cp $currentPath/netdisk_logo.ico /opt/Baidu/Baidunetdisk
+	$getPermission chown $userName:$userName /usr/share/applications/baidunetdisk.desktop
+	$getPermission echo 'Icon=/opt/Baidu/Baidunetdisk/netdisk_logo.ico' >> /usr/share/applications/baidunetdisk.desktop
+
+#then you need update and upgrade your system
+#if start can not excute still,then update libstdc++
+	if [[ s$packageManager == s"yum" ]]
+	then
+		if [[ ! -e $currentPath/libstdc++-8.1.0-5.26.el7.x86_64.rpm ]]
+		then
+			wget -O $currentPath/libstdc++-8.1.0-5.26.el7.x86_64.rpm ftp://ftp.pbone.net/mirror/ftp5.gwdg.de/pub/opensuse/repositories/home:/aevseev:/devel/CentOS7/x86_64/libstdc++-8.1.0-5.26.el7.x86_64.rpm
+			$changeOwn
+		fi
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/libstdc++-8.1.0-5.26.el7.x86_64.rpm
+	elif [[ s$packageManager == s"apt-get" ]]
+	then
+		echo 'There is nothing to do!'
+	fi
+
 
 	initSystemTime
 	echo 'leave installBaidunetdisk()'"	$systemTime "
