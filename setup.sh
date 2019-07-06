@@ -51,6 +51,9 @@ currentPath=""
 loopTimne=""
 
 getPermission="sudo "
+
+readonly getPermission
+
 userName=$1
 loopTime=$2
 #ensure the second parameter is a digital.
@@ -154,7 +157,6 @@ binaryPackageManager="rpm"
 binaryPackageImport=$getPermission" "$binaryPackageManager" --import "
 changeOwn=$getPermission" chown -R "$userName":"$userName" $currentPath/* ."
 
-readonly getPermission
 readonly packageManager
 readonly installCommandHead
 readonly installCommandHead_skipbroken
@@ -454,7 +456,7 @@ installZhcon()
 		
 #then we should modify the profile
 		$getPermission sed -i '/#type := native | unicon/,+23d' /etc/zhcon.conf
-		$getPermission tee -a /etc/zhcon.conf <<-'EOF'
+		$getPermission tee -ai /etc/zhcon.conf <<-'EOF'
 #type := native | unicon
 #ime = 智能拼音,modules/cce/cce_pinyin.so,modules/cce/dict,gb2312,unicon
 #ime = 全拼,,input/winpy.mb,gb2312,native
@@ -536,6 +538,9 @@ installMarkdownPresentationTool()
 	git clone https://github.com/visit1985/mdp.git
 	cd $currentPath/mdpInstall/mdp && make
 	$getPermission make install
+	
+	echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
+	echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
 
 	initSystemTime
 	echo 'leave installMarkdownPresentationTool()'"	$systemTime "
@@ -757,7 +762,7 @@ settingRepo()
 		$getPermission  echo 'enabled=1'  >>  /etc/yum.repos.d/mosquito-myrepo.repo
 
 #docker-repo
-		$getPermission tee /etc/yum.repos.d/docker.repo <<-'EOF'
+		$getPermission tee -ai /etc/yum.repos.d/docker.repo <<-'EOF'
 [dockerrepo]
 name=Docker Repository
 baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
@@ -1088,7 +1093,7 @@ installPython3()
 	$installCommandHead_skipbroken_nogpgcheck python-tools
 
 #set default pip source
-	$getPermission tee /home/${userName}/.pip/pip.conf <<-'EOF'
+	$getPermission tee -ai /home/${userName}/.pip/pip.conf <<-'EOF'
 [global]
 index-url = http://pypi.douban.com/simple
 [install]
@@ -1323,7 +1328,7 @@ installBlender()
 	fi
 
 #creat launcher for blender-2.79b
-	$getPermission tee /usr/share/applications/blender-2.79b.desktop <<-'EOF'
+	$getPermission tee -ai /usr/share/applications/blender-2.79b.desktop <<-'EOF'
 [Desktop Entry]
 Name=Blender-2.79b
 Name[zh_CN]=Blender-2.79b
@@ -1563,10 +1568,10 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 
 	$installCommandHead_skipbroken_nogpgcheck  p7zip p7zip-full p7zip-rar rar unrar isomaster electronic-wechat
 #Install vimx so that we can use the system pasteboard.
-	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11 vim* vim-X11*
+	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
-#set configuration for vimx
-	$getPermission tee -a /etc/vimrc <<-"EOF"
+#make configuration for vimx
+	$getPermission tee -ai /etc/vimrc <<-"EOF"
 
 set number
 set cursorline
