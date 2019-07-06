@@ -1565,6 +1565,18 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 #Install vimx so that we can use the system pasteboard.
 	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
+#make configuration for vimx
+	$getPermission tee -a /etc/vimrc <<-"EOF"
+
+set number
+set cursorline
+highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set cursorcolumn
+highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set autoindent
+set smartindent
+set laststatus=2
+EOF
 
 
 #gnome-mplayer*
@@ -1880,6 +1892,11 @@ installAutoSSH()
 
 	cd $currentPath/
 	$getPermission rm -rf $currentPath/autossh-1.4e
+	
+#set configuration for keep alive for long time
+	$getPermission sed -i 's/#TCPKeepAlive yes/TCPKeepAlive yes/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 30/g' /etc/ssh/sshd_config
 
 	initSystemTime
 	echo 'leave installAutoSSH()'"	$systemTime "
