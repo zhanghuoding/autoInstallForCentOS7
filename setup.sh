@@ -762,7 +762,7 @@ settingRepo()
 		$getPermission  echo 'enabled=1'  >>  /etc/yum.repos.d/mosquito-myrepo.repo
 
 #docker-repo
-		$getPermission tee -ai /etc/yum.repos.d/docker.repo <<-'EOF'
+		$getPermission tee -i /etc/yum.repos.d/docker.repo <<-'EOF'
 [dockerrepo]
 name=Docker Repository
 baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
@@ -1093,7 +1093,7 @@ installPython3()
 	$installCommandHead_skipbroken_nogpgcheck python-tools
 
 #set default pip source
-	$getPermission tee -ai /home/${userName}/.pip/pip.conf <<-'EOF'
+	$getPermission tee -i /home/${userName}/.pip/pip.conf <<-'EOF'
 [global]
 index-url = http://pypi.douban.com/simple
 [install]
@@ -1328,7 +1328,7 @@ installBlender()
 	fi
 
 #creat launcher for blender-2.79b
-	$getPermission tee -ai /usr/share/applications/blender-2.79b.desktop <<-'EOF'
+	$getPermission tee -i /usr/share/applications/blender-2.79b.desktop <<-'EOF'
 [Desktop Entry]
 Name=Blender-2.79b
 Name[zh_CN]=Blender-2.79b
