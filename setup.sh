@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2019-06-19
+#modify	:2019-07-06
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -198,7 +198,9 @@ start()
 
 	if [[ s$packageManager == s"yum" ]]
 	then
-		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 grub-customizer yum-versionlock
+		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 grub-customizer yum-versionlock git*
+		$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
+		$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
 		echo $userName' ALL=(ALL) ALL'   >>  /etc/sudoers
 
 		echo "menuentry 'windows 7' {"  >> /boot/grub2/grub.cfg
@@ -224,7 +226,7 @@ start()
 
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
-		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 grub-customizer yum-versionlock
+		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock
 	fi
 
 	initSystemTime
@@ -240,36 +242,149 @@ installGCCForHigherVersion()
 	echo 'enter installGCCForHigherVersion()'"	$systemTime " >> $outputRedirectionCommand
 
 	gccV=$(gcc --version)
-#	if [[ s$gccV == s"gcc (GCC) 8.1.0"* ]]
-	if [[ ! -e "/opt/gcc-8.1.0_has-been-installed" ]]
+#	if [[ s$gccV == s"gcc (GCC) 8.3.0"* ]]
+	if [[ ! -e "/opt/gcc-8.3.0_has-been-installed" ]]
 	then
-		if [[ ! -e "$currentPath/gcc-8.1.0.tar.gz" ]]
+#install gmp
+		if [[ ! -e "$currentPath/gmp-6.1.2.tar.bz2" ]]
 		then
-			wget -P $currentPath/ http://mirrors.hust.edu.cn/gnu/gcc/gcc-8.1.0/gcc-8.1.0.tar.gz
+			wget -P $currentPath/ https://gmplib.org/download/gmp/gmp-6.1.2.tar.bz2
 			$changeOwn
 		fi
-		tar -zxvf $currentPath/gcc-8.1.0.tar.gz
+		tar -jxvf $currentPath/gmp-6.1.2.tar.bz2
 		$changeOwn
-		cd $currentPath/gcc-8.1.0
-		$currentPath/gcc-8.1.0/contrib/download_prerequisites
-		$currentPath/gcc-8.1.0/configure
+		cd $currentPath/gmp-6.1.2
+		mkdir -p $currentPath/gmp-6.1.2/build
+		cd $currentPath/gmp-6.1.2/build
+		$currentPath/gmp-6.1.2/configure --prefix=/usr/local/gmp-6.1.2 --build=x86_64-linux-gnu
+		make
 		$changeOwn
+		$getPermission  make install
+		cd $currentPath
+		$getPermission ln -s /usr/local/gmp-6.1.2/lib/libgmp.so.10.3.2 /usr/lib/libgmp.so.10
+		$getPermission ln -s /usr/local/gmp-6.1.2/lib/libgmp.so.10.3.2 /lib/libgmp.so.10
+		$getPermission rm -rf $currentPath/gmp-6.1.2
+#install mpfr
+		if [[ ! -e "$currentPath/mpfr-4.0.2.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://www.mpfr.org/mpfr-current/mpfr-4.0.2.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/mpfr-4.0.2.tar.gz && mkdir $currentPath/mpfr-4.0.2/build && cd $currentPath/mpfr-4.0.2/build
+		$changeOwn
+		$currentPath/mpfr-4.0.2/configure --build=x86_64-linux-gnu --prefix=/usr/local/mpfr-4.0.2 --with-gmp=/usr/local/gmp-6.1.2
+		make
+		$changeOwn
+		$getPermission make install
+		cd $currentPath
+		$getPermission ln -s /usr/local/mpfr-4.0.2/lib/libmpfr.so.6.0.2 /usr/lib/libmpfr.so.6
+		$getPermission ln -s /usr/local/mpfr-4.0.2/lib/libmpfr.so.6.0.2 /lib/libmpfr.so.6
+		$getPermission rm -rf $currentPath/mpfr-4.0.2
+#install mpc
+		if [[ ! -e "$currentPath/mpc-1.1.0.tar.gz" ]]
+		then
+			wget -P $currentPath/ http://ftp.gnu.org/gnu/mpc/mpc-1.1.0.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/mpc-1.1.0.tar.gz && mkdir $currentPath/mpc-1.1.0/build && cd $currentPath/mpc-1.1.0/build
+		$changeOwn
+		$currentPath/mpc-1.1.0/configure --build=x86_64-linux-gnu --prefix=/usr/local/mpc-1.1.0 --with-gmp=/usr/local/gmp-6.1.2 --with-mpfr=/usr/local/mpfr-4.0.2
+		make
+		$changeOwn
+		$getPermission  make install
+		cd $currentPath
+		$getPermission ln -s /usr/local/mpc-1.1.0/lib/libmpc.so.3.1.0 /usr/lib/libmpc.so.3
+		$getPermission ln -s /usr/local/mpc-1.1.0/lib/libmpc.so.3.1.0 /lib/libmpc.so.3
+		$getPermission rm -rf $currentPath/mpc-1.1.0
+		
+#preprocessing work
+		$installCommandHead_skipbroken_nogpgcheck glibc-devel.i686 glibc-devel libgcc.i686 gcc gcc-c++ gcc-*
+
+#then install gcc
+		if [[ ! -e "$currentPath/gcc-8.3.0.tar.gz" ]]
+		then
+			wget -P $currentPath/ http://mirrors.hust.edu.cn/gnu/gcc/gcc-8.3.0/gcc-8.3.0.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/gcc-8.3.0.tar.gz
+		$changeOwn
+		cd $currentPath/gcc-8.3.0
+		$currentPath/gcc-8.3.0/contrib/download_prerequisites
+		$changeOwn
+#maybe there is an error "/usr/bin/ld: cannot find crt1.o: No such file or directory",so we find this file like bellow
+		$getPermission find /usr/ -name crt*
+		$getPermission ln -s /usr/lib/x86_64-redhat-linux6E/lib64/crt1.o /usr/lib/crt1.o
+		$getPermission ln -s /usr/lib/x86_64-redhat-linux6E/lib64/crti.o /usr/lib/crti.o
+		mkdir $currentPath/gcc-8.3.0/build && cd $currentPath/gcc-8.3.0/build
+#set Path
+		$getPermission export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/
+		$getPermission export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
+		$getPermission export CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
+
+#if there is an error ".. ../mpc/src/mul.c:error: conflicting types for ‘mpfr_fmma’ 错误：与‘mpfr_fmma’类型冲突 ",then do bellow
+		$getPermission sed -i 's/mpfr_fmma/mpfr_fmma_mp/g' /usr/local/mpfr-4.0.2/include/mpfr.h
+#if there is an error "make[2]: *** [configure-stage1-zlib] 错误 1” then do fellow
+		$getPermission ntpdate cn.pool.ntp.org
+
+
+		$currentPath/gcc-8.3.0/configure --build=x86_64-linux-gnu --prefix=/usr/local/gcc-8.3.0 --with-gmp=/usr/local/gmp-6.1.2 --with-mpfr=/usr/local/mpfr-4.0.2 --with-mpc=/usr/local/mpc-1.1.0 --enable-checking=release --disable-multilib --program-suffix=-8.3.0
 		make -j4
 		$changeOwn
-		$getPermission  make install && mkdir -p /opt/gcc-8.1.0_has-been-installed
+		$getPermission ln -s /usr/lib/x86_64-linux-gnu /usr/lib64
+		$getPermission make install && mkdir -p /opt/gcc-8.3.0_has-been-installed
 		cd $currentPath
+		$getPermission rm -rf $currentPath/gcc-8.3.0
+		
+#then add the path of gcc-8.3.0 to system environment PATH
+#		$getPermission echo 'export PATH=/usr/local/gcc-8.3.0/bin:$PATH' >> /etc/bashrc
+		$getPermission mv /usr/bin/gcc /usr/bin/gcc-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-8.3 /usr/bin/gcc
+		$getPermission mv /usr/bin/gcc-ar /usr/bin/gcc-ar-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ar-8.3 /usr/bin/gcc-ar
+		$getPermission mv /usr/bin/gcc-nm /usr/bin/gcc-nm-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-nm-8.3 /usr/bin/gcc-nm
+		$getPermission mv /usr/bin/gcc-ranlib /usr/bin/gcc-ranlib-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ranlib-8.3 /usr/bin/gcc-ranlib
+		$getPermission mv /usr/bin/gcov /usr/bin/gcov-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-8.3 /usr/bin/gcov
+#		sudo update-alternatives --remove-all gcc
+		$getPermission mv /usr/bin/c++ /usr/bin/c++-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/c++-8.3 /usr/bin/c++
+		$getPermission mv /usr/bin/cpp /usr/bin/cpp-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/cpp-8.3 /usr/bin/cpp
+		$getPermission mv /usr/bin/g++ /usr/bin/g++-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/g++-8.3 /usr/bin/g++
+		$getPermission mv /usr/bin/gfortran /usr/bin/gfortran-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gfortran-8.3 /usr/bin/gfortran
+		$getPermission mv /usr/bin/gcov-dump /usr/bin/gcov-dump-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-dump-8.3 /usr/bin/gcov-dump
+		$getPermission mv /usr/bin/gcov-tool /usr/bin/gcov-tool-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-tool-8.3 /usr/bin/gcov-tool
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-nm /usr/bin/x86_64-linux-gnu-gcc-nm-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-nm-8.3 /usr/bin/x86_64-linux-gnu-gcc-nm
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gfortran /usr/bin/x86_64-linux-gnu-gfortran-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gfortran-8.3 /usr/bin/x86_64-linux-gnu-gfortran
+		$getPermission mv /usr/bin/linux-gnu-gcc-ranlib /usr/bin/linux-gnu-gcc-ranlib-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/linux-gnu-gcc-ranlib-8.3 /usr/bin/linux-gnu-gcc-ranlib
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-ar /usr/bin/x86_64-linux-gnu-gcc-ar-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-ar-8.3 /usr/bin/x86_64-linux-gnu-gcc-ar
+		$getPermission mv /usr/bin/x86_64-linux-gnu-c++ /usr/bin/x86_64-linux-gnu-c++-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-c++-8.3 /usr/bin/x86_64-linux-gnu-c++
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc /usr/bin/x86_64-linux-gnu-gcc-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-8.3 /usr/bin/x86_64-linux-gnu-gcc
+		$getPermission mv /usr/bin/x86_64-linux-gnu-g++ /usr/bin/x86_64-linux-gnu-g++-4.8
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-g++-8.3 /usr/bin/x86_64-linux-gnu-g++
+#Then,we need create other soft links
+		$getPermission cp $currentPath/gcc-8.3.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.25 /lib64
+#backup old soft link and create a new one
+		$getPermission mv /usr/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6.old
+		$getPermission ln -s /usr/local/gcc-8.3.0/lib64/libstdc++.so.6.0.25 /usr/lib64/libstdc++.so.6
+		$getPermission mv /lib64/libstdc++.so.6 /lib64/libstdc++.so.6.old
+		$getPermission ln -s /usr/local/gcc-8.3.0/lib64/libstdc++.so.6.0.25 /lib64/libstdc++.so.6
 
-#Then,we need create soft link
-		$getPermission cp $currentPath/gcc-8.1.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.25 /lib64
-#backup old soft link
-		$getPermission mv /lib64/libstdc++.so.6 /lib64/libstdc++.so.6.backup
-		$getPermission ln -s /lib64/libstdc++.so.6.0.25 /lib64/libstdc++.so.6
-
-#		$getPermission mkdir -p /opt/gcc-8.1.0_has-been-installed
-		$getPermission rm -rf $currentPath/gcc-8.1.0
 
 	else
-		echo "The version of gcc is 'gcc (GCC) 8.1.0' ,so you needn't to update,program do nothing."
+		echo "The version of gcc is 'gcc (GCC) 8.3.0' ,so you needn't to update,program do nothing."
 	fi
 
 	initSystemTime
@@ -277,6 +392,281 @@ installGCCForHigherVersion()
 	echo 'leave installGCCForHigherVersion()'"	$systemTime " >> $outputRedirectionCommand
 }
 
+installZhcon()
+{
+#install Chinese system zhcon
+	initSystemTime
+	echo 'enter installZhcon()'"	$systemTime "
+	echo 'enter installZhcon()'"	$systemTime " >> $outputRedirectionCommand
+
+	if [[ ! -e "/opt/zhcon-0.2.6_has-been-installed" ]]
+	then	
+#preprocessing work
+		$installCommandHead_skipbroken_nogpgcheck ncurses* ncurses-devel fbida*
+
+#download the sources
+		if [[ ! -e "$currentPath/zhcon-0.2.5.tar.gz" ]]
+		then
+			wget -P $currentPath/ -O zhcon-0.2.5.tar.gz https://sourceforge.net/projects/zhcon/files/zhcon/0.2.6/zhcon-0.2.5.tar.gz/download
+			$changeOwn
+		fi
+		
+		if [[ ! -e "$currentPath/zhcon-0.2.5-to-0.2.6.diff.gz" ]]
+		then
+			wget -P $currentPath/ -O zhcon-0.2.5-to-0.2.6.diff.gz https://sourceforge.net/projects/zhcon/files/zhcon/0.2.6/zhcon-0.2.5-to-0.2.6.diff.gz/download
+			$changeOwn
+		fi
+		
+		tar -zxvf $currentPath/zhcon-0.2.5.tar.gz
+		gunzip $currentPath/zhcon-0.2.5-to-0.2.6.diff.gz
+		$changeOwn
+		cd $currentPath/zhcon-0.2.5
+		patch -p1 < $currentPath/zhcon-0.2.5-to-0.2.6.diff
+		mkdir -p $currentPath/zhcon-0.2.5/build && cd $currentPath/zhcon-0.2.5/build
+		export LIBS=" -lncurses"
+#		$currentPath/zhcon-0.2.5/configure --prefix=/usr/local/zhcon-0.2.6
+		$currentPath/zhcon-0.2.5/configure
+		$getPermission sed -i 's/#include "fbdev.h"/#include "fbdev.h"\n#include <string.h>/g'  $currentPath/zhcon-0.2.5/src/display/fblinear4.h
+		$getPermission sed -i 's/#include "fbdev.h"/#include "fbdev.h"\n#include <string.h>/g'  $currentPath/zhcon-0.2.5/src/display/fblinear8.h
+		$getPermission sed -i 's/#include <string>/#include <string>\n#include <string.h>/g'  $currentPath/zhcon-0.2.5/src/basefont.h
+		$getPermission sed -i 's/ *p = (unsigned int) p + mpText;/         p = (unsigned long int) p + mpText;/g'  $currentPath/zhcon-0.2.5/src/winime.cpp
+		$getPermission sed -i 's/#include <vector>/#include <vector>\n#include <sys\/select.h>/g'  $currentPath/zhcon-0.2.5/src/inputmanager.h
+		$getPermission sed -i 's/#include <string>/#include <string>\n#include <stdlib.h>/g'  $currentPath/zhcon-0.2.5/src/inputclient.h $currentPath/zhcon-0.2.5/src/configfile.h $currentPath/zhcon-0.2.5/src/zhcon.h
+		$getPermission sed -i 's/#include <vector>/#include <vector>\n#include <stdlib.h>/g'  $currentPath/zhcon-0.2.5/src/inputmanager.h
+		$getPermission sed -i 's/#include "cmdline.h"/#include "cmdline.h"\n#include <stdlib.h>/g'  $currentPath/zhcon-0.2.5/src/cmdline.c
+	
+		make -j4
+		$changeOwn
+		$getPermission make install && mkdir -p /opt/zhcon-0.2.6_has-been-installed
+		cd $currentPath
+		$getPermission rm -rf $currentPath/zhcon-0.2.5
+
+:<<!
+		$getPermission ln -s /usr/local/zhcon-0.2.6/bin/zhcon /usr/bin/zhcon
+		$getPermission ln -s /usr/local/zhcon-0.2.6/etc/zhcon.conf  /etc/zhcon.conf
+		$getPermission ln -s /usr/local/zhcon-0.2.6/lib/zhcon /usr/share/zhcon
+		$getPermission ln -s /usr/local/zhcon-0.2.6/man/man1/zhcon.1  /usr/share/man/man1/zhcon.1.gz
+!
+
+		$getPermission ln -s /usr/local/etc/zhcon.conf /etc/zhcon.conf
+		$getPermission ln -s /usr/local/bin/zhcon /usr/bin/zhcon
+		
+		
+#then we should modify the profile
+		$getPermission sed -i '/#type := native | unicon/,+23d' /etc/zhcon.conf
+		$getPermission tee -a /etc/zhcon.conf <<-'EOF'
+#type := native | unicon
+#ime = 智能拼音,modules/cce/cce_pinyin.so,modules/cce/dict,gb2312,unicon
+#ime = 全拼,,input/winpy.mb,gb2312,native
+#ime = 五笔,,input/wb.mb,gb2312,native
+#ime = 双拼,,input/winsp.mb,gb2312,native
+#ime = ︽30,,input/big5-ary30.mb,big5,native
+#ime = 緀,,input/big5-cj.mb,big5,native
+#ime = 猔,,input/big5-phone.mb,big5,native
+#ime = 礚郊μ,,input/big5-liu5.mb,big5,native
+#ime = GBK拼音,modules/turbo/TL_hzinput.so,modules/turbo/dict/gbk/gbkpy_mb.tab,gbk,unicon
+#ime = 自然码,modules/turbo/TL_hzinput.so,modules/turbo/dict/gb/zrm-2.tab,gb2312,unicon
+#ime = 惧块な,modules/turbo/TL_hzinput.so,modules/turbo/dict/big5/pinyin.tab,big5,unicon
+#ime = 緀块,modules/turbo/TL_hzinput.so,modules/turbo/dict/big5/cj.tab,big5,unicon
+#ime = 虏块,modules/turbo/TL_hzinput.so,modules/turbo/dict/big5/simplex.tab,big5,unicon
+ime = 全拼2,,input/py.mb,gb2312,native
+ime = 双拼2,,input/py.mb,gb2312,native
+#ime = 大众,,input/dzm.mb,gb2312,native
+#ime = 英中,,input/ed.mb,gb2312,native
+#ime = 简拼,,input/jp.mb,gb2312,native
+#ime = 普通,,input/pt.mb,gb2312,native
+#ime = 五笔二维,,input/wbew.mb,gb2312,native
+#ime = 五笔划,,input/wbh.mb,gb2312,native
+#ime = 繁体仓颉,,input/cjf.mb,gb2312,native
+#ime = 简体仓颉,,input/cjj.mb,gb2312,native
+EOF
+		$getPermission chmod 4755 /usr/bin/fbi /usr/bin/fbgs
+	else
+		echo "The version of zhcon is 'zhcon-0.2.6' ,so you needn't to update,program do nothing."
+	fi
+
+	initSystemTime
+	echo 'leave installZhcon()'"	$systemTime " 
+	echo 'leave installZhcon()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installCSVKit()
+{
+#there will install csvkit.
+	initSystemTime
+	echo 'enter installCSVKit()'"	$systemTime "
+	echo 'enter installCSVKit()'"	$systemTime " >> $outputRedirectionCommand
+
+	$getPermission pip3 install update
+	$getPermission pip3 install csvkit
+	
+	$getPermission ln -s /usr/local/python3/bin/in2csv /usr/local/bin/in2csv
+	$getPermission ln -s /usr/local/python3/bin/csvformat /usr/local/bin/csvformat
+	$getPermission ln -s /usr/local/python3/bin/csvcut /usr/local/bin/csvcut
+	$getPermission ln -s /usr/local/python3/bin/csvgrep /usr/local/bin/csvgrep
+	$getPermission ln -s /usr/local/python3/bin/csvsql /usr/local/bin/csvsql
+	$getPermission ln -s /usr/local/python3/bin/csvclean /usr/local/bin/csvclean
+	$getPermission ln -s /usr/local/python3/bin/csvjoin /usr/local/bin/csvjoin
+	$getPermission ln -s /usr/local/python3/bin/csvstat /usr/local/bin/csvstat
+	$getPermission ln -s /usr/local/python3/bin/csvpy /usr/local/bin/csvpy
+	$getPermission ln -s /usr/local/python3/bin/csvjson /usr/local/bin/csvjson
+	$getPermission ln -s /usr/local/python3/bin/csvsort /usr/local/bin/csvsort
+	$getPermission ln -s /usr/local/python3/bin/csvstack /usr/local/bin/csvstack
+	$getPermission ln -s /usr/local/python3/bin/csvlook /usr/local/bin/csvlook
+	$getPermission ln -s /usr/local/python3/bin/sql2csv /usr/local/bin/sql2csv
+	
+	$installCommandHead_skipbroken_nogpgcheck head tail more less header column body cols
+
+
+	initSystemTime
+	echo 'leave installCSVKit()'"	$systemTime "
+	echo 'leave installCSVKit()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installMarkdownPresentationTool()
+{
+#there will install mdp(Markdown presentation tool).
+	initSystemTime
+	echo 'enter installMarkdownPresentationTool()'"	$systemTime "
+	echo 'enter installMarkdownPresentationTool()'"	$systemTime " >> $outputRedirectionCommand
+
+	$installCommandHead_skipbroken_nogpgcheck git*
+	
+	mkdir $currentPath/mdpInstall && cd $currentPath/mdpInstall
+	git clone https://github.com/visit1985/mdp.git
+	cd $currentPath/mdpInstall/mdp && make
+	$getPermission make install
+
+	initSystemTime
+	echo 'leave installMarkdownPresentationTool()'"	$systemTime "
+	echo 'leave installMarkdownPresentationTool()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installCMatrix()
+{
+#install CMtarix
+	initSystemTime
+	echo 'enter installCMatrix()'"	$systemTime "
+	echo 'enter installCMatrix()'"	$systemTime " >> $outputRedirectionCommand
+
+	if [[ ! -e "/opt/cmatrix-v2.0_has-been-installed" ]]
+	then	
+#preprocessing work
+		$installCommandHead_skipbroken_nogpgcheck ncurses* ncurses-devel fbida* ncurses* gcc gcc-*
+
+#download the sources
+		if [[ ! -e "$currentPath/cmatrix-v2.0-Butterscotch.tar" ]]
+		then
+			wget -P $currentPath/ -O cmatrix-v2.0-Butterscotch.tar https://github.com/abishekvashok/cmatrix/releases/download/v2.0/cmatrix-v2.0-Butterscotch.tar
+			$changeOwn
+		fi
+		
+		tar -xvf $currentPath/cmatrix-v2.0-Butterscotch.tar
+		$changeOwn
+		cd $currentPath/cmatrix && $currentPath/configure && make
+		$getPermission make install && mkdir -p /opt/cmatrix-v2.0_has-been-installed
+		cd $currentPath
+		$getPermission rm -rf $currentPath/cmatrix-v2.0
+
+		$getPermission chmod 4755 /usr/bin/fbi /usr/bin/fbgs
+	else
+		echo "The version of CMatrix is 'cmatrix-v2.0' ,so you needn't to update,program do nothing."
+	fi
+
+	initSystemTime
+	echo 'leave installCMatrix()'"	$systemTime " 
+	echo 'leave installCMatrix()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installMPlayer()
+{
+#install mplayer but exclude skin
+	initSystemTime
+	echo 'enter installMPlayer()'"	$systemTime "
+	echo 'enter installMPlayer()'"	$systemTime " >> $outputRedirectionCommand
+
+	if [[ ! -e "/opt/MPlayer-1.4_has-been-installed" ]]
+	then	
+#preprocessing work
+		$installCommandHead_skipbroken_nogpgcheck mpalyer mplayer* yasm* alsa*  madplay* libmad* gtk+* gtk2*
+
+#then install codecs
+		if [[ ! -e "$currentPath/all-20110131.tar.bz2" ]]
+		then
+			wget -P $currentPath/ http://www.mplayerhq.hu/MPlayer/releases/codecs/all-20110131.tar.bz2
+			$changeOwn
+		fi
+		$getPermission mkdir -p /usr/local/lib/codecs
+		tar -jxvf $currentPath/all-20110131.tar.bz2
+		$changeOwn
+		$getPermission cp -r $currentPath/all-20110131/* /usr/local/lib/codecs/
+		$getPermission rm -rf $currentPath/all-20110131
+#then install mplayer
+		if [[ ! -e "$currentPath/MPlayer-1.4.tar.gz" ]]
+		then
+			wget -P $currentPath/ http://www.mplayerhq.hu/MPlayer/releases/MPlayer-1.4.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/MPlayer-1.4.tar.gz
+		$changeOwn
+		cd $currentPath/MPlayer-1.4/
+		$currentPath/MPlayer-1.4/configure --prefix=/usr/local/mplayer-1.4  --codecsdir=/usr/local/lib/codecs/ --enable-gui --enable-freetype  --language=zh_CN
+		make -j4
+		$changeOwn
+		$getPermission make install && mkdir -p /opt/MPlayer-1.4_has-been-installed
+		$getPermission chmod 4755 /usr/bin/mplayer
+		cd $currentPath
+		$getPermission rm -rf $currentPath/MPlayer-1.4
+
+		$installCommandHead_skipbroken_nogpgcheck libaa libaa* libcaca libcaca* alsa-utils*
+#		$getPermission sed -i "s/GRUB_CMDLINE_LINUX=\"crashkernel=auto rhgb quiet\"/GRUB_CMDLINE_LINUX=\"crashkernel=auto rhgb quiet vga=795\"/g"  /etc/sysconfig/grub
+#		$getPermission grub2-mkconfig -o /boot/grub2/grub.cfg
+
+	else
+		echo "The version of mplayer is 'MPlayer 1.4-4.8.5 (C) 2000-2019 MPlayer Team' ,so you needn't to update,program do nothing."
+	fi
+
+	initSystemTime
+	echo 'leave installMPlayer()'"	$systemTime " 
+	echo 'leave installMPlayer()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installFbGrab()
+{
+#install install FbGrab
+	initSystemTime
+	echo 'enter installFbGrab()'"	$systemTime "
+	echo 'enter installFbGrab()'"	$systemTime " >> $outputRedirectionCommand
+
+	if [[ ! -e "/opt/fbgrab-1.3_has-been-installed" ]]
+	then	
+#preprocessing work
+		$installCommandHead_skipbroken_nogpgcheck splint libpng libpng* zlib splint* libpng* zlib* libjpeg libjpeg*
+
+#then install codecs
+		if [[ ! -e "$currentPath/fbgrab-1.3.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://fbgrab.monells.se/fbgrab-1.3.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/fbgrab-1.3.tar.gz
+		$changeOwn
+		cd $currentPath/fbgrab-1.3/
+		make
+		$changeOwn
+		$getPermission make install && mkdir -p /opt/fbgrab-1.3_has-been-installed
+		$getPermission chmod 4755 /usr/bin/fbgrab
+		cd $currentPath
+		$getPermission rm -rf $currentPath/fbgrab-1.3
+
+	else
+		echo "The version of FbGrab is 'fbgrab-1.3' ,so you needn't to update,program do nothing."
+	fi
+
+	initSystemTime
+	echo 'leave installFbGrab()'"	$systemTime " 
+	echo 'leave installFbGrab()'"	$systemTime " >> $outputRedirectionCommand
+}
 
 installFirefox()
 {
@@ -519,11 +909,10 @@ installShadowsocks()
 
 installBaidunetdisk()
 {
-#there is how to install proxy software,shadowsocks.
 	initSystemTime
 	echo 'enter installBaidunetdisk()'"	$systemTime "
 	echo 'enter installBaidunetdisk()'"	$systemTime " >> $outputRedirectionCommand
-
+#install BaiduNetdisk GUI client
 :<<?
 	if [[ s$packageManager == s"yum" ]]
 	then
@@ -562,6 +951,24 @@ installBaidunetdisk()
 		echo 'There is nothing to do!'
 	fi
 
+#install BaiduNetdisk command line client named BaiduPCS-Go
+	if [[ ! -e "/opt/BaiduPCS-Go-v3.5.6-linux-amd64" ]]
+	then
+		if [[ ! -e "$currentPath/BaiduPCS-Go-v3.5.6-linux-amd64.zip" ]]
+		then
+			wget -P $currentPath/ wget https://github.com/iikira/BaiduPCS-Go/releases/download/v3.5.6/BaiduPCS-Go-v3.5.6-linux-amd64.zip
+			$changeOwn
+		fi
+		unzip $currentPath/BaiduPCS-Go-v3.5.6-linux-amd64.zip
+		$changeOwn
+		$getPermission mkdir -p /opt/Baidu/BaiduPCS-Go-v3.5.6-linux-amd64
+		$getPermission cp -r $currentPath/BaiduPCS-Go-v3.5.6-linux-amd64/* /opt/Baidu/BaiduPCS-Go-v3.5.6-linux-amd64/
+		$getPermission ln -s /opt/Baidu/BaiduPCS-Go-v3.5.6-linux-amd64/BaiduPCS-Go /usr/local/bin/baidupcs
+		$getPermission rm -rf $currentPath/BaiduPCS-Go-v3.5.6-linux-amd64
+
+	else
+		echo "The version of BaiduPCS-Go is 'BaiduPCS-Go-v3.5.6-linux-amd64' ,so you needn't to update,program do nothing."
+	fi
 
 	initSystemTime
 	echo 'leave installBaidunetdisk()'"	$systemTime "
@@ -702,7 +1109,7 @@ installNetease_cloud_music()
 #After installed netease_cloud_music,we should update our GCC for higher version,by execute function "installGCCForHigherVersion()",and then we can use netease_cloud_music normally.
 
 
-#download and install netease-cloud-music
+#download and install netease-cloud-music GUI client
 	if [[ s$packageManager == s"yum" ]]
 	then
 		if [[ ! -e "/opt/netease-cloud-music" ]]
@@ -831,6 +1238,58 @@ installNetease_cloud_music()
 		$changeOwn
 		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/netease-cloud-music_1.1.0_amd64_ubuntu.deb
 	fi
+	
+#download and install netease-cloud-music command line client named NetEase-MusicBox
+	$installCommandHead_skipbroken_nogpgcheck aria* libnotify* dbus* qt* python-*
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
+	$getPermission pip3 install –upgrade pip
+	$getPermission pip3 install sip
+	if [[ ! -e "/opt/NetEase-MusicBox_has-been-installed" ]]
+	then
+#install sip
+		if [[ ! -e "$currentPath/sip-4.19.17.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://www.riverbankcomputing.com/static/Downloads/sip/4.19.17/sip-4.19.17.tar.gz 
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/sip-4.19.17.tar.gz && cd $currentPath/sip-4.19.17
+		$changeOwn
+		python3 $currentPath/sip-4.19.17/configure.py
+		make -j4
+		$changeOwn
+		$getPermission  make install
+		cd $currentPath
+		$getPermission rm -rf $currentPath/sip-4.19.17
+#install PyQt4
+		if [[ ! -e "$currentPath/PyQt4_gpl_x11-4.12.3.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://nchc.dl.sourceforge.net/project/pyqt/PyQt4/PyQt-4.12.3/PyQt4_gpl_x11-4.12.3.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/PyQt4_gpl_x11-4.12.3.tar.gz&& cd $currentPath/PyQt4_gpl_x11-4.12.3
+		$changeOwn
+		echo "yes" | python3 $currentPath/PyQt4_gpl_x11-4.12.3/configure.py -q /usr/lib64/qt4/bin/qmake
+		make -j4
+		$changeOwn
+		$getPermission make install
+		cd $currentPath
+		$getPermission rm -rf $currentPath/PyQt4_gpl_x11-4.12.3
+#install mpg123
+		if [[ ! -e "$currentPath/mpg123-1.25.6-1.el7.x86_64.rpm" ]]
+		then
+			wget -P $currentPath/ http://mirror.centos.org/centos/7/os/x86_64/Packages/mpg123-1.25.6-1.el7.x86_64.rpm
+			$changeOwn
+		fi
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/mpg123-1.25.6-1.el7.x86_64.rpm
+
+		$getPermission sed -i '/  "mpg123_parameters": {/{n;s/ *"value": \[\],/    "value": ["-b","144"],/g}' ~/.netease-musicbox/config.json
+		$getPermission pip3 install NetEase-MusicBox && mkdir -p /opt/NetEase-MusicBox_has-been-installed
+		$getPermission ln -s /usr/local/python3/bin/musicbox /usr/local/bin/musicbox
+
+	else
+		echo "The version of NetEase-MusicBox is 'NetEase-MusicBox' ,so you needn't to update,program do nothing."
+	fi
 
 	initSystemTime
 	echo 'leave installNetease_cloud_music()'"	$systemTime "
@@ -936,6 +1395,7 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 	$groupinstallCommandHead_skipbroken_nogpgcheck  Virtualization 'Virtualization Client' 'Virtualization Platform' 'Virtualization Tools'
 	$installCommandHead_skipbroken_nogpgcheck  kvm kmod-kvm qemu kvm-qemu-img virt-viewervirt-manager
 	$installCommandHead_skipbroken_nogpgcheck  kvm kvm* *kvm *kvm*
+	$installCommandHead_skipbroken_nogpgcheck  cmus* mp3blaster* moc herrie sox pytone pyradio ogg123 mpg123
 
 #install Latex editor
 	$installCommandHead_skipbroken_nogpgcheck  lyx texworks texstudio emacs atom texmaker
@@ -1007,9 +1467,11 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 
 	$installCommandHead_skipbroken_nogpgcheck  *totem totem totem* *totem* totem totem-xine
 
+	$installCommandHead_skipbroken_nogpgcheck  minicom splint libpng zlib splint* libpng* zlib* libjpeg libjpeg*
+
 	$installCommandHead_skipbroken_nogpgcheck  smplayer vlc tree *ssh* ssh *ssh ssh* *network-manager network-manager
 
-	$installCommandHead_skipbroken_nogpgcheck  network-manager* *network-manager*  *gdb* gdb 
+	$installCommandHead_skipbroken_nogpgcheck  network-manager* *network-manager*  *gdb* gdb lspci* alsa* fbida*
 #*gnome-mplayer* gnome-mplayer
 #	$installCommandHead_skipbroken_nogpgcheck  *gnome-mplayer*
 
@@ -1091,7 +1553,11 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 
 	$installCommandHead_skipbroken_nogpgcheck  *VirtualBox VirtualBox* *VirtualBox*  virtualbox *virtualbox virtualbox* *virtualbox*
 
-	$installCommandHead_skipbroken_nogpgcheck  filezilla
+	$installCommandHead_skipbroken_nogpgcheck  filezilla ffmpeg* nfs* ftp* lftp* pandoc* libreoffice* pdftk* pdf* git*
+	
+	$installCommandHead_skipbroken_nogpgcheck  libstdc++-4.8.5-36.el7_6.2.i686 zlib-1.2.7-18.el7.i686
+	
+	$installCommandHead_skipbroken_nogpgcheck  tmux* screen* tmux screen mc ranger range* htop htop* top
 
 	$installCommandHead_skipbroken_nogpgcheck  kernel-devel #*kernel-devel kernel-devel* *kernel-devel*
 
@@ -1479,8 +1945,8 @@ installSogou()
 如果WPS里面无法输入中文，则用如下办法解决：
 分别修改/usr/bin/wps，/usr/bin/et，/usr/bin/wpp内容，添加黑体部分变量，如下：
 #!/bin/bash
-exportXMODIFIERS="@im=fcitx"
-exportQT_IM_MODULE="fcitx"
+export XMODIFIERS="@im=fcitx"
+export QT_IM_MODULE="fcitx"
 gOpt=
 #gOptExt=-multiply
 ........
@@ -1564,6 +2030,21 @@ enterCurrentRootPath
 installSogou
 
 enterCurrentRootPath
+installGCCForHigherVersion
+
+enterCurrentRootPath
+installZhcon
+
+enterCurrentRootPath
+installCMatrix
+
+enterCurrentRootPath
+installMarkdownPresentationTool
+
+enterCurrentRootPath
+installMPlayer
+
+enterCurrentRootPath
 installFirefox
 
 enterCurrentRootPath
@@ -1583,6 +2064,9 @@ installShadowsocks
 
 enterCurrentRootPath
 installPython3
+
+enterCurrentRootPath
+installCSVKit
 
 enterCurrentRootPath
 installBlender
@@ -1623,9 +2107,6 @@ installUpdateAndUpgrade
 enterCurrentRootPath
 installSoftwareBatch
 
-enterCurrentRootPath
-installGCCForHigherVersion
-
 initSystemTime
 echo "First installing already completed .	$systemTime "
 echo "First installing already completed .	$systemTime " >> $outputRedirectionCommand
@@ -1658,6 +2139,21 @@ do
 	installSogou
 
 	enterCurrentRootPath
+	installGCCForHigherVersion
+	
+	enterCurrentRootPath
+	installZhcon
+	
+	enterCurrentRootPath
+	installCMatrix
+	
+	enterCurrentRootPath
+	installMarkdownPresentationTool
+
+	enterCurrentRootPath
+	installMPlayer
+
+	enterCurrentRootPath
 	installWPS
 
 	enterCurrentRootPath
@@ -1674,6 +2170,9 @@ do
 
 	enterCurrentRootPath
 	installPython3
+	
+	enterCurrentRootPath
+	installCSVKit
 
 	enterCurrentRootPath
 	installBlender
@@ -1716,9 +2215,6 @@ do
 
 	enterCurrentRootPath
 	installSoftwareBatch
-
-	enterCurrentRootPath
-	installGCCForHigherVersion
 
 	initSystemTime
 	echo -e "\033[46;30mCelebrate,the {$i}th repetition has finished.	$systemTime \033[0m"
