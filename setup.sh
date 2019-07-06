@@ -1563,7 +1563,7 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 
 	$installCommandHead_skipbroken_nogpgcheck  p7zip p7zip-full p7zip-rar rar unrar isomaster electronic-wechat
 #Install vimx so that we can use the system pasteboard.
-	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
+	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11 vim* vim-X11*
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
 #set configuration for vimx
 	$getPermission tee -a /etc/vimrc <<-"EOF"
