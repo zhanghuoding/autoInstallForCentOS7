@@ -1565,7 +1565,7 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 #Install vimx so that we can use the system pasteboard.
 	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
-#make configuration for vimx
+#set configuration for vimx
 	$getPermission tee -a /etc/vimrc <<-"EOF"
 
 set number
