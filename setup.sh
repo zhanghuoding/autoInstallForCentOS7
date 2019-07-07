@@ -4,7 +4,7 @@
 #===============================================================
 #author	:王勃博
 #time		:2017-10-07
-#modify	:2019-07-06
+#modify	:2019-07-07
 #site		:Yunnan University
 #e-mail	:wangbobochn@gmail.com
 #===============================================================
@@ -630,6 +630,48 @@ installMPlayer()
 	else
 		echo "The version of mplayer is 'MPlayer 1.4-4.8.5 (C) 2000-2019 MPlayer Team' ,so you needn't to update,program do nothing."
 	fi
+
+#Then write a shell script inorde to convenient for daily use.
+	$getPermission tee -i /usr/bin/shell_my_MPlayer.sh <<-'EOF'
+#!/bin/bash
+
+########################################################################
+#You can use this script to play a video like                          #
+#   $shell_my_MPlayer.sh ~/my/testVideo.avi                            #
+#You can also use this script to play many videos by a list like       #
+#   $shell_my_MPlayer.sh -playlist ~/my/list                           #
+########################################################################
+
+
+#this script need two parameters at least
+if test $# -lt 1
+then
+	echo "Sorry! You have to set one parameters for excute at least."
+	echo "You can set one or two parameters and try again."
+	exit
+fi
+
+para0=$0
+para1=$1
+para2=$2
+paraAll=$*
+
+if [[ s$para1 == s"-playlist" ]]
+then
+	para2=${paraAll#*${para1}}
+	para2=`echo $para2 | awk '{gsub(/^\s+|\s+$/, "");print}'`
+#	para2=${para2// /\\ }
+	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 -playlist "$para2"
+else
+	para2=${paraAll#*${para0}}
+	para2=`echo $para2 | awk '{gsub(/^\s+|\s+$/, "");print}'`
+#	para2=${para2// /\\ }
+	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 "$para2"
+fi
+EOF
+
+	$getPermission chmod +x /usr/bin/shell_my_MPlayer.sh
+	$getPermission ln -s /usr/bin/shell_my_MPlayer.sh /usr/bin/myMPlayer
 
 	initSystemTime
 	echo 'leave installMPlayer()'"	$systemTime " 
