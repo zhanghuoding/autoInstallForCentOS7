@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-#===============================================================
-#author	:王勃博
-#time		:2017-10-07
-#modify	:2019-07-07
-#site		:Yunnan University
-#e-mail	:wangbobochn@gmail.com
-#===============================================================
+################################################################
+#  author   :王勃博                                            #
+#  time     :2017-10-07                                        #
+#  modify   :2019-07-19                                        #
+#  site     :Yunnan University                                 #
+#  e-mail   :wangbobochn@gmail.com                             #
+################################################################
 
 
 
@@ -638,8 +638,17 @@ installMPlayer()
 ########################################################################
 #You can use this script to play a video like                          #
 #   $shell_my_MPlayer.sh ~/my/testVideo.avi                            #
+#   $shell_my_MPlayer.sh -playlist ~/my/testVideo.avi                  #
 #You can also use this script to play many videos by a list like       #
 #   $shell_my_MPlayer.sh -playlist ~/my/list                           #
+#   $shell_my_MPlayer.sh ~/my/list                                     #
+#You can play a directory like                                         #
+#   $shell_my_MPlayer.sh ./                                            #
+#   $shell_my_MPlayer.sh /home/user/video                              #
+#   $shell_my_MPlayer.sh /home/user/video/                             #
+#   $shell_my_MPlayer.sh -playlist ./                                  #
+#   $shell_my_MPlayer.sh -playlist /home/user/video                    #
+#   $shell_my_MPlayer.sh -playlist /home/user/video/                   #
 ########################################################################
 
 
@@ -655,18 +664,178 @@ para0=$0
 para1=$1
 para2=$2
 paraAll=$*
+playList="playlist"
+readonly playList
+playFile=""
 
+
+fun_PlayList()
+{
+	subLen=$(( ${#para2} - 1 ))
+	lastChar=${para2:$subLen:1}
+
+	if [[ "s${lastChar}" == "s*" ]] 
+	then
+		para2="${para2:0:$subLen}"
+		subLen=$(( ${#para2} - 1 ))
+		lastChar=${para2:$subLen:1}
+	fi
+
+	if test ! -e "$para2"
+	then
+		echo "No such file or directory!"
+		exit
+	fi
+
+	if test -d "$para2"
+	then
+		currentPath=$( pwd )
+		if [[ "s${para2:0:1}" == "s~" ]]
+		then
+			cd ~
+			para2="$( pwd )${para2:1}"
+			cd "${currentPath}"
+		else
+			if [[ "s${para2:0:1}" == "s." ]]
+			then
+				if [[ "s${para2:1:1}" == "s." ]]
+				then
+					temp=$( pwd )
+					temp=${temp%/*}
+					para2="${temp}${para2:2}"
+				else
+					para2="$( pwd )${para2:1}"
+				fi
+			fi
+		fi
+		cd "${para2}"
+		para2="$( pwd )/"
+		cd "${currentPath}"
+
+		if test ! -r "${para2}"
+		then
+			echo "This directory dose not have read or write permissions!"
+			exit
+		fi
+		if test ! -w "${para2}"
+		then
+			echo "This directory dose not have read or write permissions!"
+			exit
+		fi
+
+		ls "${para2}"* > "${para2}${playList}"
+		playFile="${para2}${playList}"
+	else
+		if test -f "${para2}"
+		then
+			if test ! -r "${para2}"
+			then
+				echo "This directory dose not have read or write permissions!"
+				exit
+			fi
+		fi
+
+		if is_TextFile
+		then
+			playFile="${para2}"
+		else
+			fun_PlayVideo
+		fi
+	fi
+		
+	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 -playlist "${playFile}"
+	exit
+}
+
+fun_PlayVideo()
+{
+	playFile="${para2}"
+	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 "${playFile}"
+	exit
+}
+
+is_TextFile()
+{
+#For a shell function,if return 0,means function execute successfully,and $? equals true
+#if return 1,means function execute failed,and $? equals false
+	while :
+	do
+		temp1=$( file "${para2}" )
+		temp2="${temp1}"
+		temp1="${temp1#*symbolic link to *}"
+		if [[ ${#temp2} -gt ${#temp1} ]]
+		then
+			temp1="${temp1:1}"
+			temp1="${temp1%\'*}"
+			para2="${temp1}"
+		else
+			unset temp1
+			unset temp2
+			break
+		fi
+		unset temp1
+		unset temp2
+	done
+
+	temp1=$( file "${para2}" )
+	temp2="${temp1}"
+	temp1="${temp1#*${para2}: }"
+	temp3="${temp1}"
+	temp1="${temp1% text*}"
+	if [[ ${#temp3} -gt ${#temp1} ]]
+	then
+		unset temp1
+		unset temp2
+		unset temp3
+#If this file is a text file,return 0.
+		return 0
+	else
+		unset temp1
+		unset temp2
+		unset temp3
+#If this file is not a text file,return 1.
+		return 1
+	fi
+}
+
+########################       start      ###########################
 if [[ s$para1 == s"-playlist" ]]
 then
 	para2=${paraAll#*${para1}}
 	para2=`echo $para2 | awk '{gsub(/^\s+|\s+$/, "");print}'`
 #	para2=${para2// /\\ }
-	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 -playlist "$para2"
+
+	fun_PlayList
 else
 	para2=${paraAll#*${para0}}
 	para2=`echo $para2 | awk '{gsub(/^\s+|\s+$/, "");print}'`
 #	para2=${para2// /\\ }
-	mplayer -vo fbdev2 -geometry 4000:0 -zoom -vf scale -x 400 -y 225 -ao alsa -loop 0 "$para2"
+
+	if test ! -e "$para2"
+	then
+		echo "No such file or directory!"
+		exit
+	fi
+
+	if test -d "$para2"
+	then
+		fun_PlayList
+	fi
+
+	if test -f "$para2"
+	then
+		if test ! -r "${para2}"
+		then
+			echo "This directory dose not have read or write permissions!"
+			exit
+		fi
+		if is_TextFile
+		then
+			fun_PlayList
+		else
+			fun_PlayVideo
+		fi
+	fi
 fi
 EOF
 
