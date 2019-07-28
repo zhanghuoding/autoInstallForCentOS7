@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-07-19                                        #
+#  modify   :2019-07-28                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -1502,6 +1502,7 @@ installNetease_cloud_music()
 		$getPermission sed -i '/  "mpg123_parameters": {/{n;s/ *"value": \[\],/    "value": ["-b","144"],/g}' ~/.netease-musicbox/config.json
 		$getPermission pip3 install NetEase-MusicBox && mkdir -p /opt/NetEase-MusicBox_has-been-installed
 		$getPermission ln -s /usr/local/python3/bin/musicbox /usr/local/bin/musicbox
+		$getPermission ln -s /usr/local/python3/bin/musicbox /usr/local/bin/music
 
 	else
 		echo "The version of NetEase-MusicBox is 'NetEase-MusicBox' ,so you needn't to update,program do nothing."
