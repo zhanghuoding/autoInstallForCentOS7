@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-07-28                                        #
+#  modify   :2019-07-29                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -2244,6 +2244,140 @@ installWechat()
 	echo 'leave installWechat()'"	$systemTime " >> $outputRedirectionCommand
 }
 
+createCustomScript()
+{
+#in this function,we will create some custom script to make more convenient
+	initSystemTime
+	echo 'enter createCustomScript()'"	$systemTime "
+	echo 'enter createCustomScript()'"	$systemTime " >> $outputRedirectionCommand
+
+#Recursively change the file or directory name from a full-horn symbol to a half-horn symbol.
+	$getPermission  tee -i /usr/bin/changeFileOrFolderNameFromFullToHalfCorner.sh <<-"EOF"
+#!/bin/bash
+
+echo "###################################################################"
+echo "# Preparing to Recursively modify files in the folder" 
+echo "###################################################################"
+
+fileList='./fileList'
+readonly fileList
+globalName=""
+
+changeName()
+{
+	oldName="$*"
+	oldName=${oldName#*changeName }
+	if [ "s$oldName" == "s" ]
+	then
+		echo "There is function changeName"
+		return
+	fi
+#	echo "$oldName"
+	newName=$oldName
+	newName=`echo "$newName" | sed 's/《/[[/g'`
+	newName=`echo "$newName" | sed 's/》/]]/g'`
+	newName=`echo "$newName" | sed 's/<</[[/g'`
+	newName=`echo "$newName" | sed 's/>>/]]/g'`
+	newName=`echo "$newName" | sed 's/——/--/g'`
+	newName=`echo "$newName" | sed 's/【/[/g'`
+	newName=`echo "$newName" | sed 's/】/]/g'`
+	newName=`echo "$newName" | sed 's/（/(/g'`
+	newName=`echo "$newName" | sed 's/）/)/g'`
+	newName=`echo "$newName" | sed 's/·/_/g'`
+	newName=`echo "$newName" | sed 's/、/+/g'`
+	newName=`echo "$newName" | sed 's/“/"/g'`
+	newName=`echo "$newName" | sed 's/”/"/g'`
+	newName=`echo "$newName" | sed 's/：/:/g'`
+	newName=`echo "$newName" | sed 's/；/;/g'`
+	newName=`echo "$newName" | sed 's/！/!/g'`
+	newName=`echo "$newName" | sed 's/￥/$/g'`
+	newName=`echo "$newName" | sed 's/~/~/g'`
+	newName=`echo "$newName" | sed 's/，/,/g'`
+	newName=`echo "$newName" | sed 's/。/./g'`
+	newName=`echo "$newName" | sed 's/？/?/g'`
+	newName=`echo "$newName" | sed 's/ /_/g'`
+	
+	newName=`echo "$newName" | sed s/‘/\'/g`
+	newName=`echo "$newName" | sed s/’/\'/g`
+	newName=`echo "$newName" | sed 's/{/{/g'`
+	newName=`echo "$newName" | sed 's/}/}/g'`
+	
+	globalName="$newName"
+
+	if [ "s$oldName" != "s$newName" ]
+	then
+		echo "Change file name from \"$oldName\" to \"$newName\"."
+		mv "$oldName" "$newName"
+	else
+		echo "File \"$newName\" need not to be moved."
+	fi
+}
+travFolder()
+{
+	currentDir="$*"
+	currentDir=${currentDir#*travFolder }
+	fList=`ls "$currentDir"`
+	cd "$currentDir"
+	echo "===========current path $currentDir====================="
+	echo "$fList" > $fileList
+	cat $fileList
+	while read f
+	do
+		if [ "s$f" == "s@eaDir" ]
+		then
+			continue
+		fi
+		if test -d "$f"
+		then
+			changeName "$f"
+			travFolder "$globalName"
+		fi
+
+		if [ "s$f" != "sfileList" ]
+		then
+			changeName "$f"
+		fi
+	done < $fileList
+	rm $fileList
+	cd ..
+}
+travFolder "$1"
+
+EOF
+
+	$getPermission chmod +x /usr/bin/changeFileOrFolderNameFromFullToHalfCorner.sh
+	$getPermission ln -s /usr/bin/changeFileOrFolderNameFromFullToHalfCorner.sh /usr/bin/file_folderNameChangeFromFullToHalfCorner
+
+#######################################################################
+:<<!
+Here recod some tips in use.
+First is video edit:
+video spilt:
+$ffmpeg -ss 0 -t 26.7 -accurate_seek -i ./input.mp4 -codec copy -avoid_negative_ts 1 ./output.mp4
+video contcat(method 1):
+$ffmpeg -i ./input_0.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts ./input_0.ts
+$ffmpeg -i ./input_1.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts ./input_1.ts
+$ffmpeg -i "concat:input_0.ts|input_1.ts" -c copy -bsf:a aac_adtstoasc -movflags +faststart output.mp4
+$rm ./input_0.mp4 ./input_1.mp4
+
+video contcat(method 2):
+$tee ./filelist <<-"EOF"
+file 'input_0.mp4'
+file 'input_1.mp4'
+file 'input_2.mp4'
+EOF
+$ffmpeg -f concat -i filelist -c copy output.mp4
+
+!
+#######################################################################
+
+
+
+	initSystemTime
+	echo 'leave createCustomScript()'"	$systemTime "
+	echo 'leave createCustomScript()'"	$systemTime " >> $outputRedirectionCommand
+}
+
 #first we need to cp "mcp" to "/usr/bin/"
 	$getPermission cp $currentPath/mcp /usr/bin/
 	$getPermission chmod +x /usr/bin/mcp
@@ -2340,6 +2474,9 @@ installUpdateAndUpgrade
 
 enterCurrentRootPath
 installSoftwareBatch
+
+enterCurrentRootPath
+createCustomScript
 
 initSystemTime
 echo "First installing already completed .	$systemTime "
@@ -2449,6 +2586,9 @@ do
 
 	enterCurrentRootPath
 	installSoftwareBatch
+	
+	enterCurrentRootPath
+	createCustomScript
 
 	initSystemTime
 	echo -e "\033[46;30mCelebrate,the {$i}th repetition has finished.	$systemTime \033[0m"
