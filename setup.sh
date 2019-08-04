@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-07-29                                        #
+#  modify   :2019-08-04                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -723,6 +723,7 @@ fun_PlayList()
 			exit
 		fi
 
+		rm -f "${para2}${playList}"
 		ls "${para2}"* > "${para2}${playList}"
 		playFile="${para2}${playList}"
 	else
