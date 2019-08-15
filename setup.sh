@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-08-04                                        #
+#  modify   :2019-08-15                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -236,6 +236,90 @@ start()
 	echo 'leave start()'"	$systemTime " >> $outputRedirectionCommand
 }
 
+
+installRemoteTools()
+{
+#ready
+	initSystemTime
+	echo 'enter installRemoteTools()'"	$systemTime "
+	echo 'enter installRemoteTools()'"	$systemTime " >> $outputRedirectionCommand
+#install sshpass
+	if [[ ! -e "/opt/sshpass-1.06" ]]
+	then	
+#install from software repositories
+		$installCommandHead_skipbroken_nogpgcheck sshpass sshpass*
+
+#download the sources
+		if [[ ! -e "$currentPath/sshpass-1.06.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://nchc.dl.sourceforge.net/project/sshpass/sshpass/1.06/sshpass-1.06.tar.gz 
+			$changeOwn
+		fi
+		
+		tar -zxvf $currentPath/sshpass-1.06.tar.gz && cd $currentPath/sshpass-1.06
+		$changeOwn
+		$currentPath/sshpass-1.06/configure --prefix=/opt/sshpass-1.06 && make
+		$getPermission make install && $getPermission mkdir -p /opt/sshpass-1.06
+		cd $currentPath
+		$getPermission rm -rf $currentPath/sshpass-1.06
+
+		$getPermission cp /opt/sshpass-1.06/bin/sshpass /usr/bin/
+	else
+		echo "The version of sshpass is 'sshpass-1.06' ,so you needn't to update,program do nothing."
+	fi
+
+#install tcl
+	if [[ ! -e "/opt/tcl8.6.9_has-been-installed" ]]
+	then	
+#install from software repositories
+		$installCommandHead_skipbroken_nogpgcheck tcl tcl* tk tk*
+
+#download the sources
+		if [[ ! -e "$currentPath/tcl8.6.9-src.tar.gz" ]]
+		then
+			axel https://nchc.dl.sourceforge.net/project/tcl/Tcl/8.6.9/tcl8.6.9-src.tar.gz 
+			$changeOwn
+		fi
+		
+		tar -zxvf $currentPath/tcl8.6.9-src.tar.gz
+		$changeOwn
+		cd $currentPath/tcl8.6.9/unix && $currentPath/tcl8.6.9/unix/configure && make
+		$getPermission make install && $getPermission mkdir -p /opt/tcl8.6.9_has-been-installed
+		cd $currentPath
+		$getPermission rm -rf $currentPath/tcl8.6.9
+		
+	else
+		echo "The version of tcl is 'tcl8.6.9' ,so you needn't to update,program do nothing."
+	fi
+
+#install expect
+	if [[ ! -e "/opt/expect5.45.4_has-been-installed" ]]
+	then	
+#install from software repositories
+		$installCommandHead_skipbroken_nogpgcheck expect expectk expect*
+
+#download the sources
+		if [[ ! -e "$currentPath/expect5.45.4.tar.gz" ]]
+		then
+			axel https://nchc.dl.sourceforge.net/project/expect/Expect/5.45.4/expect5.45.4.tar.gz 
+			$changeOwn
+		fi
+		
+		tar -zxvf $currentPath/expect5.45.4.tar.gz
+		$changeOwn
+		cd $currentPath/expect5.45.4 && $currentPath/expect5.45.4/configure && make
+		$getPermission make install && $getPermission mkdir -p /opt/expect5.45.4_has-been-installed
+		cd $currentPath
+		$getPermission rm -rf $currentPath/expect5.45.4
+		
+	else
+		echo "The version of expect is 'expect5.45.4' ,so you needn't to update,program do nothing."
+	fi
+	initSystemTime
+	echo 'leave installRemoteTools()'"	$systemTime "
+	echo 'leave installRemoteTools()'"	$systemTime " >> $outputRedirectionCommand
+}
+
 installGCCForHigherVersion()
 {
 #This function will update your GCC to higher version.
@@ -333,7 +417,7 @@ installGCCForHigherVersion()
 		make -j4
 		$changeOwn
 		$getPermission ln -s /usr/lib/x86_64-linux-gnu /usr/lib64
-		$getPermission make install && mkdir -p /opt/gcc-8.3.0_has-been-installed
+		$getPermission make install && $getPermission mkdir -p /opt/gcc-8.3.0_has-been-installed
 		cd $currentPath
 		$getPermission rm -rf $currentPath/gcc-8.3.0
 		
@@ -439,7 +523,7 @@ installZhcon()
 	
 		make -j4
 		$changeOwn
-		$getPermission make install && mkdir -p /opt/zhcon-0.2.6_has-been-installed
+		$getPermission make install && $getPermission mkdir -p /opt/zhcon-0.2.6_has-been-installed
 		cd $currentPath
 		$getPermission rm -rf $currentPath/zhcon-0.2.5
 
@@ -568,10 +652,10 @@ installCMatrix()
 		
 		tar -xvf $currentPath/cmatrix-v2.0-Butterscotch.tar
 		$changeOwn
-		cd $currentPath/cmatrix && $currentPath/configure && make
-		$getPermission make install && mkdir -p /opt/cmatrix-v2.0_has-been-installed
+		cd $currentPath/cmatrix && $currentPath/cmatrix/configure && make
+		$getPermission make install && $getPermission mkdir -p /opt/cmatrix-v2.0_has-been-installed
 		cd $currentPath
-		$getPermission rm -rf $currentPath/cmatrix-v2.0
+		$getPermission rm -rf $currentPath/cmatrix
 
 		$getPermission chmod 4755 /usr/bin/fbi /usr/bin/fbgs
 	else
@@ -618,7 +702,7 @@ installMPlayer()
 		$currentPath/MPlayer-1.4/configure --prefix=/usr/local/mplayer-1.4  --codecsdir=/usr/local/lib/codecs/ --enable-gui --enable-freetype  --language=zh_CN
 		make -j4
 		$changeOwn
-		$getPermission make install && mkdir -p /opt/MPlayer-1.4_has-been-installed
+		$getPermission make install && $getPermission mkdir -p /opt/MPlayer-1.4_has-been-installed
 		$getPermission chmod 4755 /usr/bin/mplayer
 		cd $currentPath
 		$getPermission rm -rf $currentPath/MPlayer-1.4
@@ -871,7 +955,7 @@ installFbGrab()
 		cd $currentPath/fbgrab-1.3/
 		make
 		$changeOwn
-		$getPermission make install && mkdir -p /opt/fbgrab-1.3_has-been-installed
+		$getPermission make install && $getPermission mkdir -p /opt/fbgrab-1.3_has-been-installed
 		$getPermission chmod 4755 /usr/bin/fbgrab
 		cd $currentPath
 		$getPermission rm -rf $currentPath/fbgrab-1.3
@@ -1173,7 +1257,7 @@ installBaidunetdisk()
 	then
 		if [[ ! -e "$currentPath/BaiduPCS-Go-v3.5.6-linux-amd64.zip" ]]
 		then
-			wget -P $currentPath/ wget https://github.com/iikira/BaiduPCS-Go/releases/download/v3.5.6/BaiduPCS-Go-v3.5.6-linux-amd64.zip
+			wget -P $currentPath/ https://github.com/iikira/BaiduPCS-Go/releases/download/v3.5.6/BaiduPCS-Go-v3.5.6-linux-amd64.zip
 			$changeOwn
 		fi
 		unzip $currentPath/BaiduPCS-Go-v3.5.6-linux-amd64.zip
@@ -1240,7 +1324,7 @@ installPython3()
 	then
 		if [[ ! -e "$currentPath/Python-3.6.3.tar.xz" ]]
 		then
-			wget -P $currentPath/  "https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz"
+			wget -P $currentPath/ https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
 			$changeOwn
 		fi
 		tar -Jxvf  $currentPath/Python-3.6.3.tar.xz
@@ -1501,7 +1585,7 @@ installNetease_cloud_music()
 		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/mpg123-1.25.6-1.el7.x86_64.rpm
 
 		$getPermission sed -i '/  "mpg123_parameters": {/{n;s/ *"value": \[\],/    "value": ["-b","144"],/g}' ~/.netease-musicbox/config.json
-		$getPermission pip3 install NetEase-MusicBox && mkdir -p /opt/NetEase-MusicBox_has-been-installed
+		$getPermission pip3 install NetEase-MusicBox && $getPermission mkdir -p /opt/NetEase-MusicBox_has-been-installed
 		$getPermission ln -s /usr/local/python3/bin/musicbox /usr/local/bin/musicbox
 		$getPermission ln -s /usr/local/python3/bin/musicbox /usr/local/bin/music
 
@@ -1780,6 +1864,8 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 	$installCommandHead_skipbroken_nogpgcheck  kernel-devel #*kernel-devel kernel-devel* *kernel-devel*
 
 	$installCommandHead_skipbroken_nogpgcheck  p7zip p7zip-full p7zip-rar rar unrar isomaster electronic-wechat
+
+	$installCommandHead_skipbroken_nogpgcheck  screengrab screen* centerim center*
 #Install vimx so that we can use the system pasteboard.
 	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
@@ -2396,6 +2482,9 @@ enterCurrentRootPath
 settingRepo
 
 enterCurrentRootPath
+installRemoteTools
+
+enterCurrentRootPath
 installSogou
 
 enterCurrentRootPath
@@ -2506,6 +2595,9 @@ do
 
 	enterCurrentRootPath
 	settingRepo
+
+	enterCurrentRootPath
+	installRemoteTools
 
 	enterCurrentRootPath
 	installSogou
