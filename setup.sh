@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-08-15                                        #
+#  modify   :2019-08-16                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -17,6 +17,11 @@
 #you give parameter "upgrade",and upgrade and update will all be execute when you give parameter as update.
 #If you want to run this script,you should clear that whether you want to output redirection.
 #You should add the forth parameter "-y" to achieve output redirection or "-n" to disabled redirection.
+
+#executing example:
+#  $sudo ./setup.sh username -y upgrade
+#or executing lisk the follows:
+#  $sudo ./setup.sh username -y noupgrade
 
 #inorder to reuse this shell file,there are some variable
 
@@ -73,6 +78,11 @@ readonly outputRedirectionFlag
 currentPath=$( pwd )
 currentPath=${currentPath}/Resource
 readonly currentPath
+if [[ ! -e $currentPath ]]
+then
+	$getPermission mkdir -p $currentPath
+	$changeOwn
+fi
 
 if [[ s$outputRedirectionFlag == s"-y" ]]
 then
@@ -2490,126 +2500,14 @@ $ffmpeg -f concat -i filelist -c copy output.mp4
 
 
 #Then,we will install all of the software.
-
-
-initSystemTime
-echo "installing...	$systemTime "
-echo "installing...	$systemTime " >> $outputRedirectionCommand
-
-enterCurrentRootPath
-settingRepo
-
-enterCurrentRootPath
-installRemoteTools
-
-enterCurrentRootPath
-installSogou
-
-enterCurrentRootPath
-installGCCForHigherVersion
-
-enterCurrentRootPath
-installZhcon
-
-enterCurrentRootPath
-installCMatrix
-
-enterCurrentRootPath
-installMarkdownPresentationTool
-
-enterCurrentRootPath
-installMPlayer
-
-enterCurrentRootPath
-installFirefox
-
-enterCurrentRootPath
-installWPS
-
-enterCurrentRootPath
-installNetease_cloud_music
-
-enterCurrentRootPath
-installBaidunetdisk
-
-enterCurrentRootPath
-installWechat
-
-enterCurrentRootPath
-installShadowsocks
-
-enterCurrentRootPath
-installPython3
-
-enterCurrentRootPath
-installCSVKit
-
-enterCurrentRootPath
-installBlender
-
-enterCurrentRootPath
-installAudioCardDrive
-
-enterCurrentRootPath
-installAutoSSH
-
-enterCurrentRootPath
-installVirtualMachine
-
-enterCurrentRootPath
-installFlashPlugin
-
-enterCurrentRootPath
-installLibreOfficeChineseFont
-
-enterCurrentRootPath
-installLibstdc
-
-enterCurrentRootPath
-installGTK
-
-enterCurrentRootPath
-installSublimeText
-
-enterCurrentRootPath
-startSSHService
-
-enterCurrentRootPath
-installTeamViewer
-
-enterCurrentRootPath
-installUpdateAndUpgrade
-
-enterCurrentRootPath
-installSoftwareBatch
-
-enterCurrentRootPath
-createCustomScript
-
-initSystemTime
-echo "First installing already completed .	$systemTime "
-echo "First installing already completed .	$systemTime " >> $outputRedirectionCommand
-
-i=2
-while (( $i <= $loopTime ))
-do
-
-	if [[ $i -eq 2 ]]
+executeInstallWork()
+{
+	if [[ $1 -eq 1 ]]
 	then
 		initSystemTime
-		echo -e "\033[47;30mThen we will start reinstall some software ensure all software has been properly installed.	$systemTime \033[0m"
-		echo "Then we will start reinstall some software ensure all software has been properly installed.	$systemTime " >> $outputRedirectionCommand
-
-		initSystemTime
-		echo -e "\033[47;30mPlease wait...	$systemTime \033[0m"
-		echo "Please wait...	$systemTime " >> $outputRedirectionCommand
+		echo "installing...	$systemTime "
+		echo "installing...	$systemTime " >> $outputRedirectionCommand
 	fi
-
-	initSystemTime
-	echo "" >> $outputRedirectionCommand
-	echo -e "\033[46;30mThen,the {$i}th repetition start.	$systemTime \033[0m"
-	echo "Then,the {$i}th repetition start.	$systemTime " >> $outputRedirectionCommand
-	echo "" >> $outputRedirectionCommand
 
 	enterCurrentRootPath
 	settingRepo
@@ -2622,18 +2520,24 @@ do
 
 	enterCurrentRootPath
 	installGCCForHigherVersion
-	
+
 	enterCurrentRootPath
 	installZhcon
-	
+
 	enterCurrentRootPath
 	installCMatrix
-	
+
 	enterCurrentRootPath
 	installMarkdownPresentationTool
 
 	enterCurrentRootPath
 	installMPlayer
+
+	if [[ $1 -eq 1 ]] || [[ $1 -eq 2 ]]
+	then
+		enterCurrentRootPath
+		installFirefox
+	fi
 
 	enterCurrentRootPath
 	installWPS
@@ -2652,15 +2556,12 @@ do
 
 	enterCurrentRootPath
 	installPython3
-	
+
 	enterCurrentRootPath
 	installCSVKit
 
 	enterCurrentRootPath
 	installBlender
-
-	enterCurrentRootPath
-	installUpdateAndUpgrade
 
 	enterCurrentRootPath
 	installAudioCardDrive
@@ -2697,9 +2598,59 @@ do
 
 	enterCurrentRootPath
 	installSoftwareBatch
-	
+
 	enterCurrentRootPath
 	createCustomScript
+
+	if [[ $loopTime -eq 1 ]]
+	then
+		enterCurrentRootPath
+		installUpdateAndUpgrade
+	elif [[ $loopTime -gt 1 ]] && [[ $1 -ge 2 ]]
+	then
+		enterCurrentRootPath
+		installUpdateAndUpgrade
+	fi
+
+}
+
+
+i=1
+while (( $i <= $loopTime ))
+do
+
+	if [[ $1 -eq 1 ]]
+	then
+		initSystemTime
+		echo "installing...	$systemTime "
+		echo "installing...	$systemTime " >> $outputRedirectionCommand
+	fi
+
+	if [[ $i -eq 2 ]]
+	then
+		initSystemTime
+		echo -e "\033[47;30mThen we will start reinstall some software ensure all software has been properly installed.	$systemTime \033[0m"
+		echo "Then we will start reinstall some software ensure all software has been properly installed.	$systemTime " >> $outputRedirectionCommand
+
+		initSystemTime
+		echo -e "\033[47;30mPlease wait...	$systemTime \033[0m"
+		echo "Please wait...	$systemTime " >> $outputRedirectionCommand
+	fi
+	
+	initSystemTime
+	echo "" >> $outputRedirectionCommand
+	echo -e "\033[46;30mThen,the {$i}th repetition start.	$systemTime \033[0m"
+	echo "Then,the {$i}th repetition start.	$systemTime " >> $outputRedirectionCommand
+	echo "" >> $outputRedirectionCommand
+
+	executeInstallWork $i
+
+	if [[ $1 -eq 1 ]]
+	then
+		initSystemTime
+		echo "First installing already completed .	$systemTime "
+		echo "First installing already completed .	$systemTime " >> $outputRedirectionCommand
+	fi
 
 	initSystemTime
 	echo -e "\033[46;30mCelebrate,the {$i}th repetition has finished.	$systemTime \033[0m"
