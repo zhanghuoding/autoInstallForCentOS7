@@ -1034,6 +1034,8 @@ settingRepo()
 
 	if [[ s$packageManager == s"yum" ]]
 	then
+	
+:<<!
 		if [[ -e "/etc/yum.repos.d.backup" ]]
 		then
 			initSystemTime
@@ -1043,6 +1045,11 @@ settingRepo()
 			$getPermission  mkdir -p /etc/yum.repos.d.backup
 			$getPermission  cp /etc/yum.repos.d/* /etc/yum.repos.d.backup/
 		fi
+!
+
+	$getPermission  rm -rf /etc/yum.repos.d.backup
+	$getPermission  mkdir -p /etc/yum.repos.d.backup
+	$getPermission  cp /etc/yum.repos.d/* /etc/yum.repos.d.backup/
 
 #install yum plugins.
 #		$installCommandHead_skipbroken_nogpgcheck  yum-*
@@ -1077,12 +1084,12 @@ EOF
 		$getPermission  sed -i 's#enabled=.*$#enabled=1#g' /etc/yum.repos.d/nux-dextop.repo
 #elrepo
 		$binaryPackageImport $currentPath/RPM-GPG-KEY-elrepo.org
-		if [[ ! -e "$currentPath/elrepo-release-7.0-3.el7.elrepo.noarch.rpm" ]]
+		if [[ ! -e "$currentPath/elrepo-release-7.0-4.el7.elrepo.noarch.rpm" ]]
 		then
-			wget -P $currentPath/ http://elrepo.reloumirrors.net/elrepo/el7/x86_64/RPMS/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+			wget -P $currentPath/ http://elrepo.reloumirrors.net/elrepo/el7/x86_64/RPMS/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
 
 #setting resolving power
 #		$getPermission  sed -i 's#crashkernel=auto rhgb quiet# crashkernel=auto rhgb quiet vga=795 #g' /boot/grub2/grub.cfg
@@ -1091,17 +1098,17 @@ EOF
 		$getPermission  sed -i 's#enabled=.*$#enabled=0#g' /etc/yum.repos.d/elrepo.repo
 
 #rpmfusion
-		if [[ ! -e "$currentPath/rpmfusion-free-release-7.noarch.rpm" ]]
+		if [[ ! -e "$currentPath/rpmfusion-free-release-8.noarch.rpm" ]]
 		then
-			wget -P $currentPath/ http://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+			wget -P $currentPath/ http://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
 			$changeOwn
 		fi
-		if [[ ! -e "$currentPath/rpmfusion-nonfree-release-7.noarch.rpm" ]]
+		if [[ ! -e "$currentPath/rpmfusion-nonfree-release-8.noarch.rpm" ]]
 		then
-			wget -P $currentPath/ http://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm
+			wget -P $currentPath/ http://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-8.noarch.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/rpmfusion-free-release-7.noarch.rpm  $currentPath/rpmfusion-nonfree-release-7.noarch.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/rpmfusion-free-release-8.noarch.rpm  $currentPath/rpmfusion-nonfree-release-8.noarch.rpm
 
 #rpmforge
 		if [[ ! -e "$currentPath/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm" ]]
@@ -1143,9 +1150,18 @@ EOF
 			$changeOwn
 		fi
 	
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/epel-release-7-10.noarch.rpm 
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/epel-release-7-10.noarch.rpm
+		if [[ ! -e "$currentPath/epel-release-7-11.noarch.rpm" ]]
+		then
+			wget -P $currentPath/ https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+			$changeOwn
+		fi
+	
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/epel-release-7-11.noarch.rpm		
 #ali
 		$getPermission  wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+		$getPermission  wget -P /etc/yum.repos.d/ http://mirrors.aliyun.com/repo/epel-7-cloud.repo
+		$getPermission  wget -P /etc/yum.repos.d/ http://mirrors.aliyun.com/repo/epel-7.repo
 
 #import mono GPG
 		if [[ ! -e "/etc/pki/rpm-gpg/RPM-GPG-KEY-mono-ubuntu" ]]
@@ -1866,6 +1882,8 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 	$installCommandHead_skipbroken_nogpgcheck  p7zip p7zip-full p7zip-rar rar unrar isomaster electronic-wechat
 
 	$installCommandHead_skipbroken_nogpgcheck  screengrab screen* centerim center*
+	
+	$installCommandHead_skipbroken_nogpgcheck  tcl tcl* tk tk* expect expect*
 #Install vimx so that we can use the system pasteboard.
 	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
