@@ -1866,6 +1866,8 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 	$installCommandHead_skipbroken_nogpgcheck   freeCAD libreCAD brl-CAD freecad librecad brl-cad krita mypaint gimp scribus
 
 	$installCommandHead_skipbroken_nogpgcheck  inkscape imagemagick istanbul  recordmydesktop
+	
+	$installCommandHead_skipbroken_nogpgcheck  imagemagick imagemagick* imagemagic* convert* convert
 
 	$installCommandHead_skipbroken_nogpgcheck  nepomuk lynx w3m clonezilla partimage redobackup mondorescue fsarchiver partclone g4l
 
@@ -2359,6 +2361,89 @@ installWechat()
 	echo 'leave installWechat()'"	$systemTime " >> $outputRedirectionCommand
 }
 
+installCalibre()
+{
+#in this function,we will install Calibre,which is a e-book processing tool.
+	initSystemTime
+	echo 'enter installCalibre()'"	$systemTime "
+	echo 'enter installCalibre()'"	$systemTime " >> $outputRedirectionCommand
+
+#install
+	if [[ ! -e "/opt/calibre-3.46.0_has-been-installed" ]] && [[ ! -e /opt/Calibre ]]
+	then
+		if [[ ! -e "$currentPath/calibre-3.46.0.tar.xz" ]]
+		then
+			axel https://download.calibre-ebook.com/3.46.0/calibre-3.46.0.tar.xz
+			$changeOwn
+
+		fi
+
+#unzip tar
+		tar -xvJf $currentPath/calibre-3.46.0.tar.xz
+		$changeOwn
+		cd $currentPath/calibre-3.46.0
+		#calibre requires python >= 2.7.9 and < 3.
+		$getPermission python2.8 $currentPath/calibre-3.46.0/setup.py install && $getPermission mkdir -p /opt/calibre-3.46.0_has-been-installed
+		cd  $currentPath
+		$changeOwn
+	fi
+	$getPermission rm -rf $currentPath/calibre-3.46.0
+
+#if install failed,reinstall bellow:
+	if [[ ! -e "/opt/calibre-3.46.0_has-been-installed" ]] && [[ ! -e /opt/Calibre ]]
+	then
+		if [[ ! -e "$currentPath/linux-installer.sh" ]]
+		then
+			axel https://download.calibre-ebook.com/linux-installer.sh
+			$changeOwn
+		fi
+		$getPermission chmod +x $currentPath/linux-installer.sh
+		$getPermission $currentPath/linux-installer.sh install_dir=/opt/Calibre
+		cd  $currentPath
+		$changeOwn
+	fi
+	$getPermission rm -f $currentPath/linux-installer.sh
+
+	initSystemTime
+	echo 'leave installCalibre()'"	$systemTime "
+	echo 'leave installCalibre()'"	$systemTime " >> $outputRedirectionCommand
+}
+installGitBook()
+{
+#in this function,we will install GitBook,a command line tool (and Node.js library) for building beautiful books using GitHub/Git and Markdown (or AsciiDoc).
+	initSystemTime
+	echo 'enter installGitBook()'"	$systemTime "
+	echo 'enter installGitBook()'"	$systemTime " >> $outputRedirectionCommand
+
+#install node.js
+	if [[ ! -e "/opt/Node/node-v10.16.3" ]]
+	then
+		if [[ ! -e "$currentPath/node-v10.16.3.tar.gz" ]]
+		then
+			axel https://nodejs.org/dist/v10.16.3/node-v10.16.3.tar.gz
+			$changeOwn
+		fi
+
+#unzip tar
+		tar -zxvf $currentPath/node-v10.16.3.tar.gz
+		$changeOwn
+		cd $currentPath/node-v10.16.3 && $currentPath/node-v10.16.3/configure --prefix==/opt/Node/node-v10.16.3
+		$changeOwn
+		make && $getPermission make install
+		cd  $currentPath
+		$changeOwn
+	fi
+	$getPermission rm -rf $currentPath/node-v10.16.3
+
+#install GitBook
+	$getPermission npm install -g gitbook
+	$getPermission npm install -g gitbook-cli
+	
+	initSystemTime
+	echo 'leave installGitBook()'"	$systemTime "
+	echo 'leave installGitBook()'"	$systemTime " >> $outputRedirectionCommand
+}
+
 createCustomScript()
 {
 #in this function,we will create some custom script to make more convenient
@@ -2598,6 +2683,12 @@ executeInstallWork()
 
 	enterCurrentRootPath
 	installSoftwareBatch
+	
+	enterCurrentRootPath
+	installCalibre
+	
+	enterCurrentRootPath
+	installGitBook
 
 	enterCurrentRootPath
 	createCustomScript
