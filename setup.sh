@@ -2,9 +2,9 @@
 
 
 ################################################################
-#  author   :王勃博                                            #
+#  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2019-08-17                                        #
+#  modify   :2019-08-18                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -2711,8 +2711,8 @@ EOF
 	$getPermission sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config
 	$getPermission sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 30/g' /etc/ssh/sshd_config
 	
-	$getPermission xhost +localhost
-	$getPermission echo 'export DISPLAY=localhost:0.0' | $getPermission tee -ai /etc/bashrc
+	$getPermission echo 'export DISPLAY=:0.0' | $getPermission tee -ai /etc/bashrc
+	$getPermission xhost +
 }
 
 i=1
