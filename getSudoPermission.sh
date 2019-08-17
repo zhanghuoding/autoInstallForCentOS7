@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-#===============================================================
-#author	:王勃博
-#time		:2017-10-07
-#modify	:2019-06-03
-#site		:Yunnan University
-#e-mail	:wangbobochn@gmail.com
-#===============================================================
+################################################################
+#  author   :王勃博                                            #
+#  time     :2017-10-07                                        #
+#  modify   :2019-08-17                                        #
+#  site     :Yunnan University                                 #
+#  e-mail   :wangbobochn@gmail.com                             #
+################################################################
 
 
 
@@ -178,7 +178,34 @@ start()
 	echo 'chainloader +1'  >> /boot/grub2/grub.cfg
 	echo '}'  >> /boot/grub2/grub.cfg
 
-	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 vim-X11 
+	$getPermission echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
+	$getPermission echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
+#Perform the basic configuration for vimx
+	$getPermission tee -ai /etc/vimrc <<-"EOF"
+
+set t_Co=256
+set number
+set cursorline
+highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set cursorcolumn
+highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set autoindent
+set smartindent
+set laststatus=2
+EOF
+
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git*
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
+	
+#set configuration for keep alive for long time
+	$getPermission sed -i 's/#TCPKeepAlive yes/TCPKeepAlive yes/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 30/g' /etc/ssh/sshd_config
+	
+	$getPermission xhost +localhost
+	$getPermission echo 'export DISPLAY=localhost:0.0' | $getPermission tee -ai /etc/bashrc
+	
 	initSystemTime
 	echo 'leave start()'"	$systemTime "
 	echo 'leave start()'"	$systemTime " >> $outputRedirectionCommand
@@ -187,7 +214,9 @@ start()
 
 echo "work start...	$systemTime "
 echo "work start...	$systemTime " >> $outputRedirectionCommand
+
 start
+
 echo "The work have done.	$systemTime "
 echo "The work have done.	$systemTime " >> $outputRedirectionCommand
 

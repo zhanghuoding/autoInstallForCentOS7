@@ -4,7 +4,7 @@
 ################################################################
 #  author   :王勃博                                            #
 #  time     :2017-10-07                                        #
-#  modify   :2019-08-16                                        #
+#  modify   :2019-08-17                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -208,18 +208,17 @@ start()
 	echo 'enter start()'"	$systemTime "
 	echo 'enter start()'"	$systemTime " >> $outputRedirectionCommand
 
-	if [[ s$packageManager == s"yum" ]]
-	then
-		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ ntfs-3g aria2 grub-customizer yum-versionlock git*
-		$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
-		$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
-		echo $userName' ALL=(ALL) ALL'   >>  /etc/sudoers
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git*
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
+		
+	echo $userName' ALL=(ALL) ALL'   >>  /etc/sudoers
 
-		echo "menuentry 'windows 7' {"  >> /boot/grub2/grub.cfg
-		echo 'insmod ntfs'  >> /boot/grub2/grub.cfg
-		echo 'set root=(hd0,1)'  >> /boot/grub2/grub.cfg
-		echo 'chainloader +1'  >> /boot/grub2/grub.cfg
-		echo '}'  >> /boot/grub2/grub.cfg
+	echo "menuentry 'windows 7' {"  >> /boot/grub2/grub.cfg
+	echo 'insmod ntfs'  >> /boot/grub2/grub.cfg
+	echo 'set root=(hd0,1)'  >> /boot/grub2/grub.cfg
+	echo 'chainloader +1'  >> /boot/grub2/grub.cfg
+	echo '}'  >> /boot/grub2/grub.cfg
 
 ##########################################################################
 ##########################################################################
@@ -234,12 +233,6 @@ start()
 ##########################################################################
 ##########################################################################
 ##########################################################################
-
-
-	elif [[ s$packageManager == s"apt-get" ]]
-	then
-		$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock
-	fi
 
 	initSystemTime
 	echo 'leave start()'"	$systemTime "
@@ -633,8 +626,8 @@ installMarkdownPresentationTool()
 	cd $currentPath/mdpInstall/mdp && make
 	$getPermission make install
 	
-	echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
-	echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
+#	echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
+#	echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
 
 	initSystemTime
 	echo 'leave installMarkdownPresentationTool()'"	$systemTime "
@@ -1899,18 +1892,6 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 #Install vimx so that we can use the system pasteboard.
 	$installCommandHead_skipbroken_nogpgcheck vim-gtk vim-gnome vim-X11
 	$installCommandHead_skipbroken_nogpgcheck vim-X11
-#make configuration for vimx
-	$getPermission tee -ai /etc/vimrc <<-"EOF"
-
-set number
-set cursorline
-highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
-set cursorcolumn
-highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
-set autoindent
-set smartindent
-set laststatus=2
-EOF
 
 
 #gnome-mplayer*
@@ -2578,12 +2559,6 @@ $ffmpeg -f concat -i filelist -c copy output.mp4
 	echo 'leave createCustomScript()'"	$systemTime " >> $outputRedirectionCommand
 }
 
-#first we need to cp "mcp" to "/usr/bin/"
-	$getPermission cp $currentPath/mcp /usr/bin/
-	$getPermission chmod +x /usr/bin/mcp
-
-
-
 #Then,we will install all of the software.
 executeInstallWork()
 {
@@ -2706,12 +2681,49 @@ executeInstallWork()
 }
 
 
+init()
+{#do some initial work
+#first we need to cp "mcp" to "/usr/bin/"
+	$getPermission cp $currentPath/mcp /usr/bin/
+	$getPermission chmod +x /usr/bin/mcp
+	$getPermission echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
+	$getPermission echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
+#Perform the basic configuration for vimx
+	$getPermission tee -ai /etc/vimrc <<-"EOF"
+
+set t_Co=256
+set number
+set cursorline
+highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set cursorcolumn
+highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+set autoindent
+set smartindent
+set laststatus=2
+EOF
+
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git*
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
+	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
+	
+#set configuration for keep alive for long time
+	$getPermission sed -i 's/#TCPKeepAlive yes/TCPKeepAlive yes/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 60/g' /etc/ssh/sshd_config
+	$getPermission sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 30/g' /etc/ssh/sshd_config
+	
+	$getPermission xhost +localhost
+	$getPermission echo 'export DISPLAY=localhost:0.0' | $getPermission tee -ai /etc/bashrc
+}
+
 i=1
 while (( $i <= $loopTime ))
 do
 
-	if [[ $1 -eq 1 ]]
+	if [[ $i -eq 1 ]]
 	then
+		#do some initial work
+		init
+		
 		initSystemTime
 		echo "installing...	$systemTime "
 		echo "installing...	$systemTime " >> $outputRedirectionCommand
@@ -2736,7 +2748,7 @@ do
 
 	executeInstallWork $i
 
-	if [[ $1 -eq 1 ]]
+	if [[ $i -eq 1 ]]
 	then
 		initSystemTime
 		echo "First installing already completed .	$systemTime "
