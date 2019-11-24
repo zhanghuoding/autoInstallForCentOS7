@@ -2682,7 +2682,8 @@ executeInstallWork()
 
 
 init()
-{#do some initial work
+{
+#do some initial work
 #first we need to cp "mcp" to "/usr/bin/"
 	$getPermission cp $currentPath/mcp /usr/bin/
 	$getPermission chmod +x /usr/bin/mcp
