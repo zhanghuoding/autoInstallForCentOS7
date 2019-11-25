@@ -346,11 +346,12 @@ installGCCForHigherVersion()
 		mkdir -p $currentPath/gmp-6.1.2/build
 		cd $currentPath/gmp-6.1.2/build
 		$currentPath/gmp-6.1.2/configure --prefix=/usr/local/gmp-6.1.2 --build=x86_64-linux-gnu
-		make
+		make -j4
 		$changeOwn
 		$getPermission  make install
 		cd $currentPath
 		$getPermission ln -s /usr/local/gmp-6.1.2/lib/libgmp.so.10.3.2 /usr/lib/libgmp.so.10
+		$getPermission rm -f /lib/libgmp.so.10
 		$getPermission ln -s /usr/local/gmp-6.1.2/lib/libgmp.so.10.3.2 /lib/libgmp.so.10
 		$getPermission rm -rf $currentPath/gmp-6.1.2
 #install mpfr
@@ -362,11 +363,12 @@ installGCCForHigherVersion()
 		tar -zxvf $currentPath/mpfr-4.0.2.tar.gz && mkdir $currentPath/mpfr-4.0.2/build && cd $currentPath/mpfr-4.0.2/build
 		$changeOwn
 		$currentPath/mpfr-4.0.2/configure --build=x86_64-linux-gnu --prefix=/usr/local/mpfr-4.0.2 --with-gmp=/usr/local/gmp-6.1.2
-		make
+		make -j4
 		$changeOwn
 		$getPermission make install
 		cd $currentPath
 		$getPermission ln -s /usr/local/mpfr-4.0.2/lib/libmpfr.so.6.0.2 /usr/lib/libmpfr.so.6
+		$getPermission rm -f /lib/libmpfr.so.6
 		$getPermission ln -s /usr/local/mpfr-4.0.2/lib/libmpfr.so.6.0.2 /lib/libmpfr.so.6
 		$getPermission rm -rf $currentPath/mpfr-4.0.2
 #install mpc
@@ -378,11 +380,12 @@ installGCCForHigherVersion()
 		tar -zxvf $currentPath/mpc-1.1.0.tar.gz && mkdir $currentPath/mpc-1.1.0/build && cd $currentPath/mpc-1.1.0/build
 		$changeOwn
 		$currentPath/mpc-1.1.0/configure --build=x86_64-linux-gnu --prefix=/usr/local/mpc-1.1.0 --with-gmp=/usr/local/gmp-6.1.2 --with-mpfr=/usr/local/mpfr-4.0.2
-		make
+		make -j4
 		$changeOwn
 		$getPermission  make install
 		cd $currentPath
 		$getPermission ln -s /usr/local/mpc-1.1.0/lib/libmpc.so.3.1.0 /usr/lib/libmpc.so.3
+		$getPermission rm -f /lib/libmpc.so.3
 		$getPermission ln -s /usr/local/mpc-1.1.0/lib/libmpc.so.3.1.0 /lib/libmpc.so.3
 		$getPermission rm -rf $currentPath/mpc-1.1.0
 		
@@ -1360,7 +1363,7 @@ installPython3()
 		echo $tkvl
 		echo $tclvl
 		tkvll=${tkvl#devel-*tk-}
-		tclvll=${tclvl#devel-*tcl-}
+		tclvll=${tclvl#devel-}
 		echo $tkvll
 		echo $tclvll
 		tkvlf=${tkvll:0:3}
@@ -1376,7 +1379,7 @@ installPython3()
 
 		$currentPath/Python-3.6.3/configure  --prefix=/usr/local/python3 --enable-optimizations
 		$changeOwn
-		make
+		make -j4
 		$changeOwn
 		$getPermission  make install
 		cd $currentPath
