@@ -1411,12 +1411,23 @@ installPython3()
 	$installCommandHead_skipbroken_nogpgcheck python-tools
 
 #set default pip source
-	$getPermission tee -i /home/${userName}/.pip/pip.conf <<-'EOF'
+	if [[ s${userName} == s"root" ]]
+	then
+		$getPermission mkdir -p /root/.pip
+		$getPermission tee -i /root/.pip/pip.conf <<-'EOF'
 [global]
 index-url = http://pypi.douban.com/simple
 [install]
 trusted-host=pypi.douban.com
 EOF
+	else
+		$getPermission tee -i /home/${userName}/.pip/pip.conf <<-'EOF'
+[global]
+index-url = http://pypi.douban.com/simple
+[install]
+trusted-host=pypi.douban.com
+EOF
+	fi
 
 	initSystemTime
 	echo 'leave installPython3()'"	$systemTime "
