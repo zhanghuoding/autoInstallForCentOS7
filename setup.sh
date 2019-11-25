@@ -1421,6 +1421,7 @@ index-url = http://pypi.douban.com/simple
 trusted-host=pypi.douban.com
 EOF
 	else
+		$getPermission mkdir -p /home/${userName}/.pip
 		$getPermission tee -i /home/${userName}/.pip/pip.conf <<-'EOF'
 [global]
 index-url = http://pypi.douban.com/simple
