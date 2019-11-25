@@ -415,3 +415,4 @@ $getPermission pip install texttable
 $getPermission pip install websocket-client
 $getPermission pip install wheel
 $getPermission pip install slsx2csv
+$getPermission pip install networkx
