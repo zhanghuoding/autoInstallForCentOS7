@@ -426,43 +426,43 @@ installGCCForHigherVersion()
 		
 #then add the path of gcc-8.3.0 to system environment PATH
 #		$getPermission echo 'export PATH=/usr/local/gcc-8.3.0/bin:$PATH' >> /etc/bashrc
-		$getPermission mv /usr/bin/gcc /usr/bin/gcc-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-8.3 /usr/bin/gcc
-		$getPermission mv /usr/bin/gcc-ar /usr/bin/gcc-ar-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ar-8.3 /usr/bin/gcc-ar
-		$getPermission mv /usr/bin/gcc-nm /usr/bin/gcc-nm-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-nm-8.3 /usr/bin/gcc-nm
-		$getPermission mv /usr/bin/gcc-ranlib /usr/bin/gcc-ranlib-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ranlib-8.3 /usr/bin/gcc-ranlib
-		$getPermission mv /usr/bin/gcov /usr/bin/gcov-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-8.3 /usr/bin/gcov
+		$getPermission mv /usr/bin/gcc /usr/bin/gcc-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-8.3.0 /usr/bin/gcc
+		$getPermission mv /usr/bin/gcc-ar /usr/bin/gcc-ar-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ar-8.3.0 /usr/bin/gcc-ar
+		$getPermission mv /usr/bin/gcc-nm /usr/bin/gcc-nm-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-nm-8.3.0 /usr/bin/gcc-nm
+		$getPermission mv /usr/bin/gcc-ranlib /usr/bin/gcc-ranlib-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcc-ranlib-8.3.0 /usr/bin/gcc-ranlib
+		$getPermission mv /usr/bin/gcov /usr/bin/gcov-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-8.3.0 /usr/bin/gcov
 #		sudo update-alternatives --remove-all gcc
-		$getPermission mv /usr/bin/c++ /usr/bin/c++-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/c++-8.3 /usr/bin/c++
-		$getPermission mv /usr/bin/cpp /usr/bin/cpp-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/cpp-8.3 /usr/bin/cpp
-		$getPermission mv /usr/bin/g++ /usr/bin/g++-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/g++-8.3 /usr/bin/g++
-		$getPermission mv /usr/bin/gfortran /usr/bin/gfortran-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gfortran-8.3 /usr/bin/gfortran
-		$getPermission mv /usr/bin/gcov-dump /usr/bin/gcov-dump-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-dump-8.3 /usr/bin/gcov-dump
-		$getPermission mv /usr/bin/gcov-tool /usr/bin/gcov-tool-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-tool-8.3 /usr/bin/gcov-tool
-		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-nm /usr/bin/x86_64-linux-gnu-gcc-nm-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-nm-8.3 /usr/bin/x86_64-linux-gnu-gcc-nm
-		$getPermission mv /usr/bin/x86_64-linux-gnu-gfortran /usr/bin/x86_64-linux-gnu-gfortran-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gfortran-8.3 /usr/bin/x86_64-linux-gnu-gfortran
-		$getPermission mv /usr/bin/linux-gnu-gcc-ranlib /usr/bin/linux-gnu-gcc-ranlib-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/linux-gnu-gcc-ranlib-8.3 /usr/bin/linux-gnu-gcc-ranlib
-		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-ar /usr/bin/x86_64-linux-gnu-gcc-ar-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-ar-8.3 /usr/bin/x86_64-linux-gnu-gcc-ar
-		$getPermission mv /usr/bin/x86_64-linux-gnu-c++ /usr/bin/x86_64-linux-gnu-c++-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-c++-8.3 /usr/bin/x86_64-linux-gnu-c++
-		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc /usr/bin/x86_64-linux-gnu-gcc-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-8.3 /usr/bin/x86_64-linux-gnu-gcc
-		$getPermission mv /usr/bin/x86_64-linux-gnu-g++ /usr/bin/x86_64-linux-gnu-g++-4.8
-		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-g++-8.3 /usr/bin/x86_64-linux-gnu-g++
+		$getPermission mv /usr/bin/c++ /usr/bin/c++-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/c++-8.3.0 /usr/bin/c++
+		$getPermission mv /usr/bin/cpp /usr/bin/cpp-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/cpp-8.3.0 /usr/bin/cpp
+		$getPermission mv /usr/bin/g++ /usr/bin/g++-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/g++-8.3.0 /usr/bin/g++
+		$getPermission mv /usr/bin/gfortran /usr/bin/gfortran-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gfortran-8.3.0 /usr/bin/gfortran
+		$getPermission mv /usr/bin/gcov-dump /usr/bin/gcov-dump-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-dump-8.3.0 /usr/bin/gcov-dump
+		$getPermission mv /usr/bin/gcov-tool /usr/bin/gcov-tool-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/gcov-tool-8.3.0 /usr/bin/gcov-tool
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-nm /usr/bin/x86_64-linux-gnu-gcc-nm-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-nm-8.3.0 /usr/bin/x86_64-linux-gnu-gcc-nm
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gfortran /usr/bin/x86_64-linux-gnu-gfortran-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gfortran-8.3.0 /usr/bin/x86_64-linux-gnu-gfortran
+		$getPermission mv /usr/bin/linux-gnu-gcc-ranlib /usr/bin/linux-gnu-gcc-ranlib-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/linux-gnu-gcc-ranlib-8.3.0 /usr/bin/linux-gnu-gcc-ranlib
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc-ar /usr/bin/x86_64-linux-gnu-gcc-ar-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-ar-8.3.0 /usr/bin/x86_64-linux-gnu-gcc-ar
+		$getPermission mv /usr/bin/x86_64-linux-gnu-c++ /usr/bin/x86_64-linux-gnu-c++-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-c++-8.3.0 /usr/bin/x86_64-linux-gnu-c++
+		$getPermission mv /usr/bin/x86_64-linux-gnu-gcc /usr/bin/x86_64-linux-gnu-gcc-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-gcc-8.3.0 /usr/bin/x86_64-linux-gnu-gcc
+		$getPermission mv /usr/bin/x86_64-linux-gnu-g++ /usr/bin/x86_64-linux-gnu-g++-4.8.5
+		$getPermission ln -s /usr/local/gcc-8.3.0/bin/x86_64-linux-gnu-g++-8.3.0 /usr/bin/x86_64-linux-gnu-g++
 #Then,we need create other soft links
 		$getPermission cp $currentPath/gcc-8.3.0/x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.25 /lib64
 #backup old soft link and create a new one
