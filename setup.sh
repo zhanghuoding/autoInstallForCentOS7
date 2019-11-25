@@ -1407,6 +1407,9 @@ installPython3()
 	$getPermission  ln -s /usr/local/python3/bin/python3 /usr/bin/python3.6
 	$getPermission  ln -s /usr/bin/python3.6 /usr/bin/python3
 	$getPermission  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
+	$getPermission  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
+
+	$getPermission  pip3 install --upgrade pip
 
 	$installCommandHead_skipbroken_nogpgcheck python-tools
 
