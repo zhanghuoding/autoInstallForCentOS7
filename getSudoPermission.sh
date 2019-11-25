@@ -194,7 +194,7 @@ set smartindent
 set laststatus=2
 EOF
 
-	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git*
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim*
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
 	
