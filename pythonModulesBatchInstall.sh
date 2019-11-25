@@ -3,6 +3,11 @@
 getPermission="sudo "
 readonly getPermission
 
+logFile="pythonModulesBatchInstall-successful.log"
+readonly logFile
+
+touch $logFile
+
 $getPermission pip install shutil
 $getPermission pip install crontab
 $getPermission pip install contextmanger
