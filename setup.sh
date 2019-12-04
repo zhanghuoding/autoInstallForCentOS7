@@ -409,9 +409,9 @@ installGCCForHigherVersion()
 		$getPermission ln -s /usr/lib/x86_64-redhat-linux6E/lib64/crti.o /usr/lib/crti.o
 		mkdir $currentPath/gcc-8.3.0/build && cd $currentPath/gcc-8.3.0/build
 #set Path
-		$getPermission export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/
-		$getPermission export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
-		$getPermission export CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
+		export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/
+		export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
+		export CPLUS_INCLUDE_PATH=/usr/include/x86_64-linux-gnu
 
 #if there is an error ".. ../mpc/src/mul.c:error: conflicting types for ‘mpfr_fmma’ 错误：与‘mpfr_fmma’类型冲突 ",then do bellow
 		$getPermission sed -i 's/mpfr_fmma/mpfr_fmma_mp/g' /usr/local/mpfr-4.0.2/include/mpfr.h
