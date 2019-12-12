@@ -233,7 +233,7 @@ echo -e "\033[0;37m	[ https://blog.csdn.net/u010599211/article/details/86672940 
 echo -e "\033[0;37m	[ https://www.cnblogs.com/liuhedong/p/10695969.html ]	\033[0m"
 echo -e "\033[0;37m------------------------------------------------------------------------\033[0m"
 echo -e "\033[0;37m										\033[0m"
-echo -e "\033[0;37m	$sudo systemctl restart NetwokManager	\033[0m"
+echo -e "\033[0;37m	$sudo systemctl restart NetworkManager	\033[0m"
 echo -e "\033[0;37m	$sudo nmcli con show	\033[0m"
 echo -e "\033[0;37m	$sudo nmcli con mod "System eth0" ipv4.dns "114.114.114.114 8.8.8.8"	\033[0m"
 echo -e "\033[0;37m	$sudo nmcli con up "System eth0"	\033[0m"
