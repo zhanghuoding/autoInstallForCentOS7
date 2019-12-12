@@ -194,7 +194,7 @@ set smartindent
 set laststatus=2
 EOF
 
-	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim* p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* enconv iconv  enca file file* libtool docker docker* mtr traceroute 
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim* p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* enconv iconv  enca file file* libtool docker docker* mtr traceroute  network*
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
 	
@@ -225,7 +225,22 @@ echo "" >> $outputRedirectionCommand
 echo ""
 echo "" >> $outputRedirectionCommand
 
-echo -e "\033[41;30mPlease run the script named \"setup.sh\"to continue.	$systemTime \033[0m"
+echo -e "\033[0;37m========================================================================\033[0m"
+echo -e "\033[0;37m   Please run the following command to configure DNS.	$systemTime \033[0m"
+echo -e "\033[0;37m   You can see the tutorial at websit:	\033[0m"
+echo -e "\033[0;37m	[ https://www.cnblogs.com/baihuitestsoftware/articles/9519724.html ]	\033[0m"
+echo -e "\033[0;37m	[ https://blog.csdn.net/u010599211/article/details/86672940 ]	\033[0m"
+echo -e "\033[0;37m	[ https://www.cnblogs.com/liuhedong/p/10695969.html ]	\033[0m"
+echo -e "\033[0;37m------------------------------------------------------------------------\033[0m"
+echo -e "\033[0;37m										\033[0m"
+echo -e "\033[0;37m	$sudo systemctl restart NetwokManager	\033[0m"
+echo -e "\033[0;37m	$sudo nmcli con show	\033[0m"
+echo -e "\033[0;37m	$sudo nmcli con mod "System eth0" ipv4.dns "114.114.114.114 8.8.8.8"	\033[0m"
+echo -e "\033[0;37m	$sudo nmcli con up "System eth0"	\033[0m"
+echo -e "\033[0;37m										\033[0m"
+echo -e "\033[0;37m========================================================================\033[0m"
+#echo -e "\033[41;30mPlease run the script named \"setup.sh\"to continue.	$systemTime \033[0m"
+echo "Please run the script named \"setup.sh\"to continue.	$systemTime"
 echo "Please run the script named \"setup.sh\"to continue.	$systemTime " >> $outputRedirectionCommand
 
 echo ""
