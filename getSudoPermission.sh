@@ -181,8 +181,85 @@ start()
 	$getPermission echo 'export TERM=xterm-256color' | $getPermission tee -ai /etc/bashrc
 	$getPermission echo 'export TERM=screen.linux' | $getPermission tee -ai /etc/bashrc
 #Perform the basic configuration for vimx
-	$getPermission tee -ai /etc/vimrc <<-"EOF"
+#	$getPermission tee -ai /etc/vimrc <<-"EOF"
+#
+#set t_Co=256
+#set number
+#set cursorline
+#highlight CursorLine   cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+#set cursorcolumn
+#highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=NONE
+#set autoindent
+#set smartindent
+#set laststatus=2
+#EOF
 
+	$getPermission tee -i /etc/vimrc <<-"EOF"
+
+if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
+   set fileencodings=ucs-bom,utf-8,latin1
+endif
+
+set nocompatible	" Use Vim defaults (much better!)
+set bs=indent,eol,start		" allow backspacing over everything in insert mode
+"set ai			" always set autoindenting on
+"set backup		" keep a backup file
+set viminfo='20,\"50	" read/write a .viminfo file, don't store more
+			" than 50 lines of registers
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+
+" Only do this part when compiled with support for autocommands
+if has("autocmd")
+  augroup redhat
+  autocmd!
+  " In text files, always limit the width of text to 78 characters
+  " autocmd BufRead *.txt set tw=78
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal! g'\"" |
+  \ endif
+  " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+  " start with spec file template
+  autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
+  augroup END
+endif
+
+if has("cscope") && filereadable("/usr/bin/cscope")
+   set csprg=/usr/bin/cscope
+   set csto=0
+   set cst
+   set nocsverb
+   " add any database in current directory
+   if filereadable("cscope.out")
+      cs add $PWD/cscope.out
+   " else add database pointed to by environment
+   elseif $CSCOPE_DB != ""
+      cs add $CSCOPE_DB
+   endif
+   set csverb
+endif
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+filetype plugin on
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=[4%dm
+     set t_Sf=[3%dm
+endif
+
+" Don't wake up system with blinking cursor:
+" http://www.linuxpowertop.org/known.php
+let &guicursor = &guicursor . ",a:blinkon0"
 set t_Co=256
 set number
 set cursorline
@@ -192,6 +269,105 @@ highlight CursorColumn cterm=NONE ctermbg=black ctermfg=green guibg=NONE guifg=N
 set autoindent
 set smartindent
 set laststatus=2
+EOF
+
+	$getPermission tee -i /etc/bashrc <<-"EOF"
+
+# /etc/bashrc
+
+# System wide functions and aliases
+# Environment stuff goes in /etc/profile
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+# are we an interactive shell?
+if [ "$PS1" ]; then
+  if [ -z "$PROMPT_COMMAND" ]; then
+    case $TERM in
+    xterm*|vte*)
+      if [ -e /etc/sysconfig/bash-prompt-xterm ]; then
+          PROMPT_COMMAND=/etc/sysconfig/bash-prompt-xterm
+      elif [ "${VTE_VERSION:-0}" -ge 3405 ]; then
+          PROMPT_COMMAND="__vte_prompt_command"
+      else
+          PROMPT_COMMAND='printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+      fi
+      ;;
+    screen*)
+      if [ -e /etc/sysconfig/bash-prompt-screen ]; then
+          PROMPT_COMMAND=/etc/sysconfig/bash-prompt-screen
+      else
+          PROMPT_COMMAND='printf "\033k%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/~}"'
+      fi
+      ;;
+    *)
+      [ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc/sysconfig/bash-prompt-default
+      ;;
+    esac
+  fi
+  # Turn on parallel history
+  shopt -s histappend
+  history -a
+  # Turn on checkwinsize
+  shopt -s checkwinsize
+  [ "$PS1" = "\\s-\\v\\\$ " ] && PS1="[\u@\h \W]\\$ "
+  # You might want to have e.g. tty in prompt (e.g. more virtual machines)
+  # and console windows
+  # If you want to do so, just add e.g.
+  # if [ "$PS1" ]; then
+  #   PS1="[\u@\h:\l \W]\\$ "
+  # fi
+  # to your custom modification shell script in /etc/profile.d/ directory
+fi
+
+if ! shopt -q login_shell ; then # We're not a login shell
+    # Need to redefine pathmunge, it get's undefined at the end of /etc/profile
+    pathmunge () {
+        case ":${PATH}:" in
+            *:"$1":*)
+                ;;
+            *)
+                if [ "$2" = "after" ] ; then
+                    PATH=$PATH:$1
+                else
+                    PATH=$1:$PATH
+                fi
+        esac
+    }
+
+    # By default, we want umask to get set. This sets it for non-login shell.
+    # Current threshold for system reserved uid/gids is 200
+    # You could check uidgid reservation validity in
+    # /usr/share/doc/setup-*/uidgid file
+    if [ $UID -gt 199 ] && [ "`/usr/bin/id -gn`" = "`/usr/bin/id -un`" ]; then
+       umask 002
+    else
+       umask 022
+    fi
+
+    SHELL=/bin/bash
+    # Only display echos from profile.d scripts if we are no login shell
+    # and interactive - otherwise just process them to set envvars
+    for i in /etc/profile.d/*.sh; do
+        if [ -r "$i" ]; then
+            if [ "$PS1" ]; then
+                . "$i"
+            else
+                . "$i" >/dev/null
+            fi
+        fi
+    done
+
+    unset i
+    unset -f pathmunge
+fi
+# vim:ts=4:sw=4
+export TERM=xterm-256color
+export TERM=screen.linux
+export DISPLAY=:0.0
 EOF
 
 	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim* p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* enconv iconv  enca file file* libtool docker docker* mtr traceroute  network* tmux* screen* fbida fbida*
