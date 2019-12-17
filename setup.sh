@@ -4,7 +4,7 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2019-12-16                                        #
+#  modify   :2019-12-17                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -1411,7 +1411,7 @@ installPython3()
 
 	$getPermission  pip3 install --upgrade pip
 
-	$installCommandHead_skipbroken_nogpgcheck python-tools
+	$installCommandHead_skipbroken_nogpgcheck python-tools python-devel python3-devel libevent-devel gevent
 
 #set default pip source
 	if [[ s${userName} == s"root" ]]

@@ -8,6 +8,7 @@ readonly logFile
 
 touch $logFile
 
+$getPermission pip install memory_profiler
 $getPermission pip install shutil
 $getPermission pip install crontab
 $getPermission pip install contextmanger
