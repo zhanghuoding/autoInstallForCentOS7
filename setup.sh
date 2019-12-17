@@ -1402,11 +1402,15 @@ installPython3()
 #	$getPermission  rm -r /usr/bin/python.backup
 #	$getPermission  ln -s /usr/bin/python2.7 /usr/bin/python
 #	$getPermission  cp  /usr/bin/python /usr/bin/python.backup
-	$getPermission  rm -r /usr/bin/python3
-	$getPermission  rm -r /usr/bin/python3.6.3
+	$getPermission  rm -rf /usr/bin/python3
+	$getPermission  rm -rf /usr/bin/python3.6.3
 	$getPermission  ln -s /usr/local/python3/bin/python3 /usr/bin/python3.6
 	$getPermission  ln -s /usr/bin/python3.6 /usr/bin/python3
+	$getPermission  mv /usr/bin/pip3 /usr/bin/pip3.old
+	$getPermission  mv /usr/bin/pip3.6 /usr/bin/pip3.6.old
+	$getPermission  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3.6
 	$getPermission  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip3
+	$getPermission  rm -f /usr/bin/pip
 	$getPermission  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
 
 	$getPermission  pip3 install --upgrade pip
