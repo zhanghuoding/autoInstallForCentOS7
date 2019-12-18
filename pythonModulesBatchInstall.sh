@@ -423,5 +423,5 @@ do
 	$getPermission pip install slsx2csv
 	$getPermission pip install networkx
 	
-	i=`expr $i + 1
+	i=`expr $i + 1`
 done
