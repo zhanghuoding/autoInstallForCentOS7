@@ -1403,6 +1403,7 @@ installPython3()
 #	$getPermission  ln -s /usr/bin/python2.7 /usr/bin/python
 #	$getPermission  cp  /usr/bin/python /usr/bin/python.backup
 	$getPermission  rm -rf /usr/bin/python3
+	$getPermission  rm -rf /usr/bin/python3.6
 	$getPermission  rm -rf /usr/bin/python3.6.3
 	$getPermission  ln -s /usr/local/python3/bin/python3 /usr/bin/python3.6
 	$getPermission  ln -s /usr/bin/python3.6 /usr/bin/python3
@@ -1826,7 +1827,7 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 
 	$installCommandHead_skipbroken_nogpgcheck  openssh-server openssh-client openssh samba telnet-server autossh *utossh *utoss* autossh* autoss*
 
-	$installCommandHead_skipbroken_nogpgcheck  telnet ssh xinetd fcitx fcitx* makehuman darktable entangle hugin python python3 python-tools
+	$installCommandHead_skipbroken_nogpgcheck  telnet ssh xinetd fcitx fcitx* makehuman darktable entangle hugin python-tools #python python3
 
 	$installCommandHead_skipbroken_nogpgcheck  python-pip sublime-text xournal tree dia umbrello umlgraph gcc-c++ gcc-c++*
 
@@ -2638,6 +2639,9 @@ executeInstallWork()
 	fi
 
 	enterCurrentRootPath
+	installPython3
+
+	enterCurrentRootPath
 	settingRepo
 
 	enterCurrentRootPath
@@ -2681,9 +2685,6 @@ executeInstallWork()
 
 	enterCurrentRootPath
 	installShadowsocks
-
-	enterCurrentRootPath
-	installPython3
 
 	enterCurrentRootPath
 	installCSVKit
