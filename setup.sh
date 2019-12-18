@@ -4,7 +4,7 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2019-12-17                                        #
+#  modify   :2019-12-18                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -1427,6 +1427,29 @@ index-url = http://pypi.douban.com/simple
 [install]
 trusted-host=pypi.douban.com
 EOF
+
+		$getPermission tee -i /root/.pip/pip.conf.backup <<-'EOF'
+[global]
+timeout=20
+index-url = http://pypi.douban.com/simple
+extra-index-url=
+        http://mirrors.aliyun.com/pypi/simple
+        https://pypi.tuna.tsinghua.edu.cn/simple
+        http://pypi.mirrors.ustc.edu.cn/simple
+        http://pypi.hustunique.com/simple
+        http://pypi.sdutlinux.org/simple
+        https://files.pythonhosted.org/simple
+        https://files.pythonhosted.org
+[install]
+trusted-host=
+        pypi.douban.com
+        mirrors.aliyun.com
+        pypi.tuna.tsinghua.edu.cn
+        pypi.mirrors.ustc.edu.cn
+        pypi.hustunique.com
+        pypi.sdutlinux.org
+        files.pythonhosted.org
+EOF
 	else
 		$getPermission mkdir -p /home/${userName}/.pip
 		$getPermission tee -i /home/${userName}/.pip/pip.conf <<-'EOF'
@@ -1434,6 +1457,29 @@ EOF
 index-url = http://pypi.douban.com/simple
 [install]
 trusted-host=pypi.douban.com
+EOF
+
+		$getPermission tee -i /home/${userName}/.pip/pip.conf.backup <<-'EOF'
+[global]
+timeout=20
+index-url = http://pypi.douban.com/simple
+extra-index-url=
+        http://mirrors.aliyun.com/pypi/simple
+        https://pypi.tuna.tsinghua.edu.cn/simple
+        http://pypi.mirrors.ustc.edu.cn/simple
+        http://pypi.hustunique.com/simple
+        http://pypi.sdutlinux.org/simple
+        https://files.pythonhosted.org/simple
+        https://files.pythonhosted.org
+[install]
+trusted-host=
+        pypi.douban.com
+        mirrors.aliyun.com
+        pypi.tuna.tsinghua.edu.cn
+        pypi.mirrors.ustc.edu.cn
+        pypi.hustunique.com
+        pypi.sdutlinux.org
+        files.pythonhosted.org
 EOF
 	fi
 
