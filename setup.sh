@@ -1759,7 +1759,7 @@ installQtEverywhere()
 			wget -O $currentPath/qt-everywhere-src-5.14.0.tar.xz http://mirrors.ustc.edu.cn/qtproject/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
 			$changeOwn
 		fi
-		tar -zxJf $currentPath/qt-everywhere-src-5.14.0.tar.xz
+		tar -vxJf $currentPath/qt-everywhere-src-5.14.0.tar.xz
 		$changeOwn
 		cd ${currentPath}/qt-everywhere-src-5.14.0
 		echo "yes" | $getPermission ${currentPath}/qt-everywhere-src-5.14.0/configure -prefix /usr/local/Qt/qt-everywhere-src-5.14.0
