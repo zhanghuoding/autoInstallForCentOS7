@@ -1648,6 +1648,8 @@ installNetease_cloud_music()
 		make -j4
 		$changeOwn
 		$getPermission  make install
+		$getPermission  ln -s /usr/local/python3/bin/sip /usr/bin/sip
+		$getPermission  mkdir /opt/sip/sip-4.19.17-has_been_installed
 		cd $currentPath
 		$getPermission rm -rf $currentPath/sip-4.19.17
 #install PyQt4
@@ -1740,6 +1742,86 @@ EOF
 	initSystemTime
 	echo 'leave installBlender()'"	$systemTime "
 	echo 'leave installBlender()'"	$systemTime " >> $outputRedirectionCommand
+}
+
+installQtEverywhere()
+{
+#install tuitor like [ https://www.cnblogs.com/emouse/archive/2013/01/28/2880142.html ]
+#there will install qt-everywhere-src-5.14.0
+	initSystemTime
+	echo 'enter installQtEverywhere()'"	$systemTime "
+	echo 'enter installQtEverywhere()'"	$systemTime " >> $outputRedirectionCommand
+#install qt-everywhere
+	if [[ ! -e "/opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0" ]]
+	then
+		if [[ ! -e "$currentPath/qt-everywhere-src-5.14.0.tar.xz" ]]
+		then
+			wget -O $currentPath/qt-everywhere-src-5.14.0.tar.xz http://mirrors.ustc.edu.cn/qtproject/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
+			$changeOwn
+		fi
+		tar -zxJf $currentPath/qt-everywhere-src-5.14.0.tar.xz
+		$changeOwn
+		cd ${currentPath}/qt-everywhere-src-5.14.0
+		echo "yes" | $getPermission ${currentPath}/qt-everywhere-src-5.14.0/configure -prefix /usr/local/Qt/qt-everywhere-src-5.14.0
+		$changeOwn
+		$getPermission make -j4
+		$changeOwn
+		$getPermission make install
+		$getPermission mkdir -p /opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0
+
+		cd $currentPath
+		$getPermission  rm -rf ${currentPath}/qt-everywhere-src-5.14.0
+	fi
+
+	$getPermission echo 'export QT_DEBUG_PLUGINS=1' >> /etc/profile
+	$getPermission echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/Qt/qt-everywhere-src-5.14.0/lib' >> /etc/profile
+	$installCommandHead_skipbroken_nogpgcheck libxkbcommon* qt5-qtbase-devel*
+
+#istall sip
+	if [[ ! -e "/opt/sip/sip-4.19.17-has_been_installed" ]]
+	then
+		if [[ ! -e "$currentPath/sip-4.19.17.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://www.riverbankcomputing.com/static/Downloads/sip/4.19.17/sip-4.19.17.tar.gz 
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/sip-4.19.17.tar.gz && cd $currentPath/sip-4.19.17
+		$changeOwn
+		python3 $currentPath/sip-4.19.17/configure.py
+		make -j4
+		$changeOwn
+		$getPermission  make install
+		$getPermission  ln -s /usr/local/python3/bin/sip /usr/bin/sip
+		$getPermission  mkdir /opt/sip/sip-4.19.17-has_been_installed
+
+		cd $currentPath
+		$getPermission rm -rf $currentPath/sip-4.19.17
+	fi
+#install PyQt5
+	$installCommandHead_skipbroken_nogpgcheck libxkbcommon* qt5-qtbase-devel*
+
+	if [[ ! -e "/opt/PyQt/PyQt5_gpl-5.11.3-has_been_installed" ]]
+	then
+		if [[ ! -e "$currentPath/PyQt5_gpl-5.11.3.tar.gz" ]]
+		then
+			wget -P $currentPath/ https://jaist.dl.sourceforge.net/project/pyqt/PyQt5/PyQt-5.11.3/PyQt5_gpl-5.11.3.tar.gz
+			$changeOwn
+		fi
+		tar -zxvf $currentPath/PyQt5_gpl-5.11.3.tar.gz && cd $currentPath/PyQt5_gpl-5.11.3
+		$changeOwn
+		echo "yes" | python3 $currentPath/PyQt5_gpl-5.11.3/configure.py --qmake=/usr/local/Qt/qt-everywhere-src-5.14.0/bin/qmake
+		make all -j4
+		$changeOwn
+		$getPermission make install
+		$getPermission mkdir -p /opt/PyQt/PyQt5_gpl-5.11.3-has_been_installed
+
+		cd $currentPath
+		$getPermission rm -rf $currentPath/PyQt5_gpl-5.11.3
+	fi
+
+	initSystemTime
+	echo 'leave installQtEverywhere()'"	$systemTime "
+	echo 'leave installQtEverywhere()'"	$systemTime " >> $outputRedirectionCommand
 }
 
 
@@ -2640,6 +2722,9 @@ executeInstallWork()
 
 	enterCurrentRootPath
 	installPython3
+
+	enterCurrentRootPath
+	installQtEverywhere
 
 	enterCurrentRootPath
 	settingRepo
