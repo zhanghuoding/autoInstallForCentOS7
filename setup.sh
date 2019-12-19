@@ -4,7 +4,7 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2019-12-18                                        #
+#  modify   :2019-12-19                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -1751,32 +1751,6 @@ installQtEverywhere()
 	initSystemTime
 	echo 'enter installQtEverywhere()'"	$systemTime "
 	echo 'enter installQtEverywhere()'"	$systemTime " >> $outputRedirectionCommand
-#install qt-everywhere
-	if [[ ! -e "/opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0" ]]
-	then
-		if [[ ! -e "$currentPath/qt-everywhere-src-5.14.0.tar.xz" ]]
-		then
-			wget -O $currentPath/qt-everywhere-src-5.14.0.tar.xz http://mirrors.ustc.edu.cn/qtproject/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
-			$changeOwn
-		fi
-		tar -vxJf $currentPath/qt-everywhere-src-5.14.0.tar.xz
-		$changeOwn
-		cd ${currentPath}/qt-everywhere-src-5.14.0
-		echo "yes" | $getPermission ${currentPath}/qt-everywhere-src-5.14.0/configure -prefix /usr/local/Qt/qt-everywhere-src-5.14.0
-		$changeOwn
-		$getPermission make -j4
-		$changeOwn
-		$getPermission make install
-		$getPermission mkdir -p /opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0
-
-		cd $currentPath
-		$getPermission  rm -rf ${currentPath}/qt-everywhere-src-5.14.0
-	fi
-
-	$getPermission echo 'export QT_DEBUG_PLUGINS=1' >> /etc/profile
-	$getPermission echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/Qt/qt-everywhere-src-5.14.0/lib' >> /etc/profile
-	$installCommandHead_skipbroken_nogpgcheck libxkbcommon* qt5-qtbase-devel*
-
 #istall sip
 	if [[ ! -e "/opt/sip/sip-4.19.17-has_been_installed" ]]
 	then
@@ -1797,6 +1771,34 @@ installQtEverywhere()
 		cd $currentPath
 		$getPermission rm -rf $currentPath/sip-4.19.17
 	fi
+
+#install qt-everywhere
+	if [[ ! -e "/opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0" ]]
+	then
+		if [[ ! -e "$currentPath/qt-everywhere-src-5.14.0.tar.xz" ]]
+		then
+			wget -O $currentPath/qt-everywhere-src-5.14.0.tar.xz http://mirrors.ustc.edu.cn/qtproject/archive/qt/5.14/5.14.0/single/qt-everywhere-src-5.14.0.tar.xz
+			$changeOwn
+		fi
+		tar -vxJf $currentPath/qt-everywhere-src-5.14.0.tar.xz
+		$changeOwn
+		cd ${currentPath}/qt-everywhere-src-5.14.0
+		#echo "yes" | $getPermission ${currentPath}/qt-everywhere-src-5.14.0/configure -prefix /usr/local/Qt/qt-everywhere-src-5.14.0
+		echo "o\ny" | $getPermission ${currentPath}/qt-everywhere-src-5.14.0/configure -prefix /usr/local/Qt/qt-everywhere-src-5.14.0 -debug-and-release -qt-xcb -openssl  -nomake examples -nomake tests
+		$changeOwn
+		$getPermission make -j4
+		$changeOwn
+		$getPermission make install
+		$getPermission mkdir -p /opt/Qt/qt-everywhere-src-5.14.0_has-been-installed_in_usr_local_Qt_qt-everywhere-src-5.14.0
+
+		cd $currentPath
+		$getPermission  rm -rf ${currentPath}/qt-everywhere-src-5.14.0
+	fi
+
+	$getPermission echo 'export QT_DEBUG_PLUGINS=1' >> /etc/profile
+	$getPermission echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/Qt/qt-everywhere-src-5.14.0/lib' >> /etc/profile
+	$installCommandHead_skipbroken_nogpgcheck libxkbcommon* qt5-qtbase-devel*
+
 #install PyQt5
 	$installCommandHead_skipbroken_nogpgcheck libxkbcommon* qt5-qtbase-devel*
 
