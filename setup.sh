@@ -19,9 +19,9 @@
 #You should add the forth parameter "-y" to achieve output redirection or "-n" to disabled redirection.
 
 #executing example:
-#  $sudo ./setup.sh username -y upgrade
+#  $sudo ./setup.sh username 1 -y upgrade
 #or executing lisk the follows:
-#  $sudo ./setup.sh username -y noupgrade
+#  $sudo ./setup.sh username 1 -y noupgrade
 
 #inorder to reuse this shell file,there are some variable
 
