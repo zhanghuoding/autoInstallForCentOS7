@@ -13,6 +13,7 @@ touch $logFile
 
 while [ $i -le ${exec_Times} ]
 do
+	$getPermission pip install cx_Oracle
 	$getPermission pip install filetype
 	$getPermission pip install memory_profiler
 	$getPermission pip install shutil
