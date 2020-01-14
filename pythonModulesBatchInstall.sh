@@ -433,6 +433,7 @@ do
 	$getPermission pipVersion install wheel
 	$getPermission pipVersion install slsx2csv
 	$getPermission pipVersion install networkx
+	$getPermission pipVersion install mgzip
 	
 	i=`expr $i + 1`
 done
