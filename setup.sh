@@ -4,7 +4,7 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2020-01-14                                        #
+#  modify   :2020-02-01                                        #
 #  site     :Yunnan University                                 #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -208,7 +208,7 @@ start()
 	echo 'enter start()'"	$systemTime "
 	echo 'enter start()'"	$systemTime " >> $outputRedirectionCommand
 
-	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim* p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* enconv iconv  enca file file* libtool docker docker* mtr traceroute network* tmux* screen* fbida fbida* shellinabox pigz pbzip2 mgzip 
+	$installCommandHead_skipbroken_nogpgcheck  wget curl axel gcc gcc-++ g++ gcc-* ntfs-3g aria2 grub-customizer yum-versionlock git* vim vim-X11 vim* p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* enconv iconv  enca file file* libtool docker docker* mtr traceroute network* tmux* screen* fbida fbida* shellinabox pigz pbzip2 mgzip reptyr
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria2
 	$getPermission ln -s /usr/bin/aria2c /usr/bin/aria
 		
@@ -1895,7 +1895,7 @@ gpgkey=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A1
 	fi
 #finished
 
-	$installCommandHead_skipbroken_nogpgcheck  createrepo cairo-dock thunderbird gimp evince p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* file file* libtool docker docker* mtr traceroute network* tmux* screen* fbida fbida* shellinabox pigz pbzip2 mgzip 
+	$installCommandHead_skipbroken_nogpgcheck  createrepo cairo-dock thunderbird gimp evince p7zip-plugins p7zip-full p7zip-rar rar unrar bzip2 unzip zip *zip* file file* libtool docker docker* mtr traceroute network* tmux* screen* fbida fbida* shellinabox pigz pbzip2 mgzip reptyr
 
 	$installCommandHead_skipbroken_nogpgcheck  gcc gcc-++ g++ ntfs-3g adb stardict fuse-ntfs-3g dict valgrind valgrin* grub-customizer
 
