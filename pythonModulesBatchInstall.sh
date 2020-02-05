@@ -434,6 +434,7 @@ do
 	$getPermission ${pipVersion} install slsx2csv
 	$getPermission ${pipVersion} install networkx
 	$getPermission ${pipVersion} install mgzip
+	$getPermission ${pipVersion} install sklearn
 	
 	i=`expr $i + 1`
 done
