@@ -435,6 +435,7 @@ do
 	$getPermission ${pipVersion} install networkx
 	$getPermission ${pipVersion} install mgzip
 	$getPermission ${pipVersion} install sklearn
+	$getPermission ${pipVersion} install guppy
 	
 	i=`expr $i + 1`
 done
