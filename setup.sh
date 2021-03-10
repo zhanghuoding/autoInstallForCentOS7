@@ -4,8 +4,8 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2020-02-01                                        #
-#  site     :Yunnan University                                 #
+#  modify   :2021-03-10                                        #
+#  site     :Harbin Institute of Technology                    #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
 
@@ -1379,9 +1379,28 @@ installPython3()
 
 		$currentPath/Python-3.6.3/configure  --prefix=/usr/local/python3 --enable-optimizations
 		$changeOwn
+####################################################################################
+#maybe the following can be deleted(20210310)
+		sed -i '27a\import requests.packages.urllib3.util.ssl_' $currentPath/Python-3.6.3/Lib/logging/handlers.py
+####################################################################################
 		make -j4
 		$changeOwn
 		$getPermission  make install
+		if [ $? -ne 0 ];
+		then
+			echo "Python3.6 install failled!";
+			sed -i '28d' $currentPath/Python-3.6.3/Lib/logging/handlers.py;
+			$getPermission  make install;
+			if [ $? -ne 0 ];
+			then
+				echo "Python3.6 install failled!";
+				exit;
+			else
+				echo "Python3.6 install successful!";
+			fi
+		else
+			echo "Python3.6 install successful!";
+		fi
 		cd $currentPath
 
 #Then we need modify some file
