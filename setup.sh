@@ -4,7 +4,7 @@
 ################################################################
 #  author   :Owen Wang                                         #
 #  time     :2017-10-07                                        #
-#  modify   :2021-03-10                                        #
+#  modify   :2021-03-28                                        #
 #  site     :Harbin Institute of Technology                    #
 #  e-mail   :wangbobochn@gmail.com                             #
 ################################################################
@@ -998,7 +998,7 @@ installFirefox()
 	then
 		if [[ ! -e "$currentPath/Firefox-latest-x86_64.tar.bz2" ]]
 		then
-			wget -P $currentPath/ http://download.firefox.com.cn/releases/firefox/56.0/zh-CN/Firefox-latest-x86_64.tar.bz2
+			wget -P $currentPath/ https://download-ssl.firefox.com.cn/releases/firefox/87.0/zh-CN/Firefox-latest-x86_64.tar.bz2
 			$changeOwn
 		fi
 		tar -jxvf $currentPath/Firefox-latest-x86_64.tar.bz2
@@ -1011,7 +1011,7 @@ installFirefox()
 
 	if [[ ! -e "$currentPath/flash_player_npapi_linux.x86_64.tar.gz" ]]
 	then
-		wget -P $currentPath/ https://fpdownload.adobe.com/get/flashplayer/pdc/27.0.0.130/flash_player_npapi_linux.x86_64.tar.gz
+		wget -P $currentPath/ https://www.flash.cn/cdm/latest/flash_player_npapi_linux.x86_64.tar.gz
 		$changeOwn
 	fi
 	
@@ -1309,7 +1309,7 @@ installTeamViewer()
 	then
 		if [[ ! -e $currentPath/teamviewer.x86_64.rpm ]]
 		then
-			wget -O $currentPath/teamviewer.x86_64.rpm https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
+			wget -O $currentPath/teamviewer.x86_64.rpm https://dl.teamviewer.cn/download/linux/version_15x/teamviewer_15.16.8.x86_64.rpm
 			$changeOwn
 		fi
 		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/teamviewer.x86_64.rpm
@@ -1317,7 +1317,7 @@ installTeamViewer()
 	then
 		if [[ ! -e $currentPath/teamviewer_amd64.deb ]]
 		then
-			wget -O $currentPath/teamviewer_amd64.deb https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+			wget -O $currentPath/teamviewer_amd64.deb https://dl.teamviewer.cn/download/linux/version_15x/teamviewer_15.16.8_amd64.deb
 			$changeOwn
 		fi
 		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck  $currentPath/teamviewer_amd64.deb
@@ -1522,20 +1522,20 @@ installNetease_cloud_music()
 	then
 		if [[ ! -e "/opt/netease-cloud-music" ]]
 		then
-			if [[ ! -e "$currentPath/netease-cloud-music_1.1.0_amd64_ubuntu.deb" ]]
+			if [[ ! -e "$currentPath/netease-cloud-music_ubuntu.deb" ]]
 			then
-				wget -P $currentPath/ http://d1.music.126.net/dmusic/netease-cloud-music_1.1.0_amd64_ubuntu.deb
+				wget -P $currentPath/netease-cloud-music_ubuntu.deb https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb
 				$changeOwn
 			fi
-			ar -vx $currentPath/netease-cloud-music_1.1.0_amd64_ubuntu.deb
+			ar -vx $currentPath/netease-cloud-music_ubuntu.deb
 			$changeOwn
 			xz -dk $currentPath/data.tar.xz
 			$changeOwn
 			tar -xvf $currentPath/data.tar
 			$changeOwn
-			$getPermission  cp -r $currentPath/usr /
+			$getPermission  cp -r $currentPath/usr $currentPath/opt /
 
-			$getPermission  rm -rf $currentPath/control.tar.gz $currentPath/data.tar.xz $currentPath/debian-binary $currentPath/data.tar $currentPath/usr
+			$getPermission  rm -rf $currentPath/control.tar.gz $currentPath/data.tar.xz $currentPath/debian-binary $currentPath/data.tar $currentPath/usr $currentPath/opt
 #chmod
 			$getPermission  chmod 4755 /usr/lib/netease-cloud-music/chrome-sandbox
 
@@ -1639,12 +1639,12 @@ installNetease_cloud_music()
 
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
-		if [[ ! -e "$currentPath/netease-cloud-music_1.1.0_amd64_ubuntu.deb" ]]
+		if [[ ! -e "$currentPath/netease-cloud-music_ubuntu.deb" ]]
 		then
-			wget -P $currentPath/ http://d1.music.126.net/dmusic/netease-cloud-music_1.1.0_amd64_ubuntu.deb
+			wget -P $currentPath/netease-cloud-music_ubuntu.deb https://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb
 		fi
 		$changeOwn
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/netease-cloud-music_1.1.0_amd64_ubuntu.deb
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/netease-cloud-music_ubuntu.deb
 	fi
 	
 #download and install netease-cloud-music command line client named NetEase-MusicBox
@@ -1716,31 +1716,40 @@ installBlender()
 	echo 'enter installBlender()'"	$systemTime "
 	echo 'enter installBlender()'"	$systemTime " >> $outputRedirectionCommand
 
-	if [[ ! -e "/opt/Blender/blender-2.79b" ]]
+	if [[ ! -e "/opt/Blender" ]]
 	then
-		if [[ ! -e $currentPath/blender-2.79b-linux-glibc219-x86_64.tar.bz2 ]]
+		if [[ ! -e $currentPath/blender-linux64.tar.xz ]]
 		then
-			wget -O $currentPath/blender-2.79b-linux-glibc219-x86_64.tar.bz2 https://download.blender.org/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2
+			wget -O $currentPath/blender-linux64.tar.xz https://download.blender.org/release/Blender2.92/blender-2.92.0-linux64.tar.xz
 			$changeOwn
 		fi
-		tar -jxvf $currentPath/blender-2.79b-linux-glibc219-x86_64.tar.bz2
+		xz -dk $currentPath/blender-linux64.tar.xz
+		$changeOwn
+#tar命令解压时如何去除目录结构及其解压到指定目录
+#去除目录结构加上 --strip-components N
+#如： 压缩文件eg.tar 中文件信息为 src/src/src/eg.txt
+#运行 tar -xvf eg.tar --strip-components 1
+#结果：src/src/eg.txt
+#如果运行  tar -xvf eg.tar --strip-components 3
+#解压结果为： eg.txt
+		mkdir -p $currentPath/blender-linux64 && tar -xvf $currentPath/blender-linux64.tar -C $currentPath/blender-linux64 --strip-components 1
 		$changeOwn
 
-		$getPermission mkdir -p /opt/Blender/blender-2.79b
-		$getPermission chmod 777 -R /opt/Blender/*
-		$getPermission cp -r $currentPath/blender-2.79b-linux-glibc219-x86_64/* /opt/Blender/blender-2.79b
+		$getPermission mkdir -p /opt/Blender
+		$getPermission chmod 777 -R /opt/Blender
+		$getPermission cp -r $currentPath/blender-linux64/* /opt/Blender
 
-		$getPermission  rm -rf $currentPath/blender-2.79b-linux-glibc219-x86_64
+		$getPermission  rm -rf $currentPath/blender-linux64
 	fi
 
 #creat launcher for blender-2.79b
-	$getPermission tee -i /usr/share/applications/blender-2.79b.desktop <<-'EOF'
+	$getPermission tee -i /usr/share/applications/blender.desktop <<-'EOF'
 [Desktop Entry]
-Name=Blender-2.79b
-Name[zh_CN]=Blender-2.79b
-Comment=Blender-2.79b Client
-Exec=/opt/Blender/blender-2.79b/blender
-Icon=/opt/Blender/blender-2.79b/blender.svg
+Name=Blender
+Name[zh_CN]=Blender
+Comment=Blender Client
+Exec=/opt/Blender/blender
+Icon=/opt/Blender/blender.svg
 Terminal=false
 Type=Application
 Categories=Application;
@@ -2298,20 +2307,20 @@ installWPS()
 #install other wps.You can remove following three lines.
 	if [[ s$packageManager == s"yum" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office-11.1.0.8392-1.x86_64.rpm" ]]
+		if [[ ! -e "$currentPath/wps-office.x86_64.rpm" ]]
 		then
-			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office-11.1.0.8392-1.x86_64.rpm
+			wget -P $currentPath/wps-office.x86_64.rpm https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/10161/wps-office-11.1.0.10161-1.x86_64.rpm
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office-11.1.0.8392-1.x86_64.rpm
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office.x86_64.rpm
 	elif [[ s$packageManager == s"apt-get" ]]
 	then
-		if [[ ! -e "$currentPath/wps-office_11.1.0.8392_amd64.deb" ]]
+		if [[ ! -e "$currentPath/wps-office.amd64.deb" ]]
 		then
-			wget -P $currentPath/ https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/8392/wps-office_11.1.0.8392_amd64.deb
+			wget -P $currentPath/wps-office.amd64.deb https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/10161/wps-office_11.1.0.10161_amd64.deb
 			$changeOwn
 		fi
-		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office_11.1.0.8392_amd64.deb
+		$packageManagerLocalInstallCommand_skipbroken_nogpgcheck   $currentPath/wps-office.amd64.deb
 	fi
 
 #repair a bug that wps cann't running and hint "/opt/kingsoft/wps-office/office6/wps: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by /opt/kingsoft/wps-office/office6/libc++abi.so.1):"
@@ -2748,7 +2757,7 @@ executeInstallWork()
 	installQtEverywhere
 
 	enterCurrentRootPath
-	settingRepo
+	#settingRepo
 
 	enterCurrentRootPath
 	installRemoteTools
@@ -2937,8 +2946,8 @@ filetype plugin on
 
 if &term=="xterm"
      set t_Co=8
-     set t_Sb=[4%dm
-     set t_Sf=[3%dm
+     set t_Sb=^[[4%dm
+     set t_Sf=^[[3%dm
 endif
 
 " Don't wake up system with blinking cursor:
