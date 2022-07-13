@@ -2887,6 +2887,7 @@ init()
 #set laststatus=2
 #EOF
 
+#For some hosts, the path of the file may be /etc/vim/vimrc
 	$getPermission tee -i /etc/vimrc <<-"EOF"
 
 if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
@@ -2964,6 +2965,7 @@ set smartindent
 set laststatus=2
 EOF
 
+#For some hosts, the path of the file may be /etc/bash.bashrc
 	$getPermission tee -i /etc/bashrc <<-"EOF"
 
 # /etc/bashrc
